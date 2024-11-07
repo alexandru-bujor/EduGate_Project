@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import mysql.connector
 import datetime
 
@@ -215,43 +215,167 @@ def parents_dashboard():
     return render_template('parent_dashboard.html', parent=parent, students=students)
 
 
-
-
 # ------------------ ADMIN DASHBOARD ROUTE ------------------
 @app.route('/admin_dashboard')
 def admin_dashboard():
     if 'user_id' not in session or session.get('role') != 'Admin':
         return redirect(url_for('login'))  # Only allow admins to access this page
 
+    user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Fetch admin user details
-    user_id = session['user_id']
-    cursor.execute("""
-        SELECT full_name, profile_picture 
-        FROM users 
-        WHERE user_id = %s
-    """, (user_id,))
+    # Fetch admin details
+    cursor.execute("SELECT full_name, profile_picture FROM users WHERE user_id = %s", (user_id,))
     admin = cursor.fetchone()
 
-    # Fetch additional data like users, classes, etc.
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-
-    cursor.execute("SELECT * FROM classes")
-    classes = cursor.fetchall()
-
+    # Fetch teachers with their details
     cursor.execute("""
-        SELECT s.student_id, s.user_id, u.full_name AS student_name, s.class_id, s.parent_id 
+        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
+        FROM users u
+        JOIN teachers t ON u.user_id = t.user_id
+    """)
+    teachers = cursor.fetchall()
+
+    # Fetch parents with their details
+    cursor.execute("""
+        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
+        FROM users u
+        JOIN parents p ON u.user_id = p.user_id
+    """)
+    parents = cursor.fetchall()
+
+    # Fetch students with details, including linked parent and class information
+    cursor.execute("""
+        SELECT s.student_id, s.user_id, u.full_name AS student_name, s.class_id, s.parent_id, u.email, u.phone_number, u.profile_picture,
+               c.class_name, c.description AS class_description, pu.full_name AS parent_name
         FROM students s
         JOIN users u ON s.user_id = u.user_id
+        LEFT JOIN classes c ON s.class_id = c.class_id
+        LEFT JOIN parents p ON s.parent_id = p.parent_id
+        LEFT JOIN users pu ON p.user_id = pu.user_id
     """)
     students = cursor.fetchall()
 
+    # Fetch all users for user management
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+
+    # Fetch all classes with linked teacher information
+    cursor.execute("""
+        SELECT c.class_id, c.class_name, c.description, t.teacher_id, u.full_name AS teacher_name, u.profile_picture AS teacher_picture
+        FROM classes c
+        LEFT JOIN teachers t ON c.teacher_id = t.teacher_id
+        LEFT JOIN users u ON t.user_id = u.user_id
+    """)
+    classes = cursor.fetchall()
+
+    # Close the connection
     conn.close()
 
-    return render_template('admin_dashboard.html', admin=admin, users=users, classes=classes, students=students)
+    # Render the template with all the data
+    return render_template(
+        'admin_dashboard.html',
+        admin=admin,
+        users=users,
+        classes=classes,
+        teachers=teachers,
+        parents=parents,
+        students=students
+    )
+
+# ------------------ SEARCH STUDENTS ROUTE ------------------
+@app.route('/search_students')
+def search_students():
+    query = request.args.get('query', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Modify the query to include username and profile picture
+    cursor.execute("""
+        SELECT s.student_id, u.username, u.full_name AS student_name, u.email, u.profile_picture, 
+               c.class_name, pu.full_name AS parent_name, p.parent_id
+        FROM students s
+        JOIN users u ON s.user_id = u.user_id
+        LEFT JOIN classes c ON s.class_id = c.class_id
+        LEFT JOIN parents p ON s.parent_id = p.parent_id
+        LEFT JOIN users pu ON p.user_id = pu.user_id
+        WHERE u.full_name LIKE %s OR u.username LIKE %s
+    """, (f"%{query}%", f"%{query}%"))
+
+    students = cursor.fetchall()
+    conn.close()
+
+    return jsonify(students)
+
+
+# ------------------ SEARCH PARENTS ROUTE ------------------
+@app.route('/search_parents')
+def search_parents():
+    query = request.args.get('query', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Search parents by name or email
+    cursor.execute("""
+        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
+        FROM users u
+        JOIN parents p ON u.user_id = p.user_id
+        WHERE u.full_name LIKE %s OR u.email LIKE %s
+    """, (f"%{query}%", f"%{query}%"))
+
+    parents = cursor.fetchall()
+
+    conn.close()
+
+    return jsonify(parents)
+
+
+
+# ------------------ SEARCH CLASSES ROUTE ------------------
+@app.route('/search_classes')
+def search_classes():
+    query = request.args.get('query', '')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Use LIKE with wildcard for partial matching
+    cursor.execute("""
+        SELECT class_id, class_name, description 
+        FROM classes 
+        WHERE class_name LIKE %s OR description LIKE %s
+    """, (f"%{query}%", f"%{query}%"))
+    classes = cursor.fetchall()
+
+    conn.close()
+    return jsonify(classes)
+
+# ------------------ ADD CLASS ROUTE ------------------
+@app.route('/add_class', methods=['POST'])
+def add_class():
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        return redirect(url_for('login'))
+
+    class_name = request.form['class_name']
+    description = request.form['description']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO classes (class_name, description) 
+        VALUES (%s, %s)
+    """, (class_name, description))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Class added successfully!')
+    return redirect(url_for('admin_dashboard'))
+
 
 # ------------------ ADD USER ROUTE ------------------
 @app.route('/add_user', methods=['POST'])
@@ -280,6 +404,85 @@ def add_user():
 
     flash('User added successfully!')
     return redirect(url_for('admin_dashboard'))
+
+# ------------------ SEARCH TEACHERS ROUTE ------------------
+@app.route('/search_teachers')
+def search_teachers():
+    query = request.args.get('query', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Search teachers by name or email
+    cursor.execute("""
+        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
+        FROM users u
+        JOIN teachers t ON u.user_id = t.user_id
+        WHERE u.full_name LIKE %s OR u.email LIKE %s
+    """, (f"%{query}%", f"%{query}%"))
+
+    teachers = cursor.fetchall()
+
+    conn.close()
+
+    return jsonify(teachers)
+
+
+# ------------------ SEARCH USERS ROUTE ------------------
+@app.route('/search_users')
+def search_users():
+    query = request.args.get('query', '')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Use LIKE with wildcard for partial matching
+    cursor.execute("""
+        SELECT user_id, full_name, email, phone_number, role, profile_picture 
+        FROM users 
+        WHERE full_name LIKE %s OR email LIKE %s OR username LIKE %s
+    """, (f"%{query}%", f"%{query}%", f"%{query}%"))
+    users = cursor.fetchall()
+
+    conn.close()
+    return jsonify(users)
+
+
+# ------------------ LINK TEACHER TO CLASS ROUTE ------------------
+@app.route('/link_teacher_to_class', methods=['POST'])
+def link_teacher_to_class():
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        return redirect(url_for('login'))  # Only allow admins to access this page
+
+    class_id = request.form['class_id']
+    teacher_user_id = request.form['teacher_id']
+
+    # Establish the database connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Retrieve the teacher_id from the teachers table using the user_id
+    cursor.execute("SELECT teacher_id FROM teachers WHERE user_id = %s", (teacher_user_id,))
+    teacher = cursor.fetchone()
+
+    if not teacher:
+        flash("Teacher not found.")
+        return redirect(url_for('admin_dashboard'))
+
+    teacher_id = teacher[0]
+
+    # Update the class to link the teacher
+    try:
+        cursor.execute("UPDATE classes SET teacher_id = %s WHERE class_id = %s", (teacher_id, class_id))
+        conn.commit()
+        flash("Teacher linked to class successfully!")
+    except mysql.connector.Error as err:
+        flash(f"Error: {err}")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('admin_dashboard'))
+
 
 # ------------------ LINK STUDENT TO CLASS ROUTE ------------------
 @app.route('/link_student_class', methods=['POST'])
@@ -340,6 +543,25 @@ def delete_user(user_id):
 
     flash('User deleted successfully!')
     return redirect(url_for('admin_dashboard'))
+
+# ------------------ DELETE CLASS ROUTE ------------------
+@app.route('/delete_class/<int:class_id>', methods=['POST'])
+def delete_class(class_id):
+    if 'user_id' not in session or session.get('role') != 'Admin':
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM classes WHERE class_id = %s", (class_id,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Class deleted successfully!')
+    return redirect(url_for('admin_dashboard'))
+
 
 # ------------------ RECORD ATTENDANCE ROUTE ------------------
 @app.route('/record_attendance', methods=['POST'])

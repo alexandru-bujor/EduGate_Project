@@ -75,6 +75,20 @@ button {
   color: white;
 }
 
+.profile-picture-cell {
+        width: 60px; /* Adjust as needed */
+        height: 60px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+.profile-picture-cell img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures 1:1 aspect ratio without distortion */
+        border-radius: 3px; /* Optional: for rounded corners */
+    }
+
 button:hover {
   background-color: #58b9c0;
 }

@@ -56,6 +56,8 @@
                 <span id="person-name">{{ admin.full_name }}</span> <br>
                 <span id="name-second-line">School Administrator</span>
             </p>
+            <!-- Logout -->
+        <a href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>
 
@@ -70,81 +72,249 @@
     <!-- Users Section -->
     <section id="users" class="active">
         <h2>Manage Users</h2>
-        <form action="{{ url_for('add_user') }}" method="POST">
-            <input type="text" name="full_name" placeholder="Full Name" required>
+        <form id="add-user-form" action="{{ url_for('add_user') }}" method="POST">
             <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="password" placeholder="Password Hash" required>
+            <input type="text" name="role" placeholder="Role (Student, Parent, Admin)" required>
+            <input type="text" name="full_name" placeholder="Full Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="text" name="phone_number" placeholder="Phone Number" required>
-            <select name="role">
-                <option value="Student">Student</option>
-                <option value="Teacher">Teacher</option>
-                <option value="Parent">Parent</option>
-                <option value="Admin">Admin</option>
-            </select>
             <button type="submit">Add User</button>
         </form>
 
+        <h3>Search Users</h3>
+        <input type="text" id="user-search-query" placeholder="Search by username, name">
+        <button onclick="searchUsers()">Search</button>
+
         <h3>Users List</h3>
-        <table>
-            <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.full_name }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phone_number }}</td>
-                <td>{{ user.role }}</td>
-                <td>
-                    <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+        <table id="users-table">
+            <thead>
+                <tr>
+                    <th>Profile Photo</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.user_id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </section>
+
 
     <!-- Classes Section -->
     <section id="classes">
         <h2>Manage Classes</h2>
-        <form action="{{ url_for('link_student_class') }}" method="POST">
-            <select name="student_id">
-                {% for student in students %}
-                <option value="{{ student.student_id }}">{{ student.student_name }}</option>
-                {% endfor %}
-            </select>
-            <select name="class_id">
+
+        <h3>Link Teacher to Class</h3>
+        <form action="{{ url_for('link_teacher_to_class') }}" method="POST">
+            <label for="class_id">Select Class:</label>
+            <select name="class_id" id="class_id" required>
                 {% for class in classes %}
-                <option value="{{ class.class_id }}">{{ class.class_name }}</option>
+                    <option value="{{ class.class_id }}">{{ class.class_name }}</option>
                 {% endfor %}
             </select>
-            <button type="submit">Link Student to Class</button>
+
+            <label for="teacher_id">Select Teacher:</label>
+            <select name="teacher_id" id="teacher_id" required>
+                {% for teacher in teachers %}
+                    <option value="{{ teacher.user_id }}">{{ teacher.full_name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Link Teacher to Class</button>
         </form>
 
-        <h2>Link Students to Parents</h2>
-        <form action="{{ url_for('link_student_parent') }}" method="POST">
-            <select name="student_id">
-                {% for student in students %}
-                <option value="{{ student.student_id }}">{{ student.student_name }}</option>
+        <!-- Classes List -->
+        <h3>Classes List</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Class ID</th>
+                    <th>Class Name</th>
+                    <th>Description</th>
+                    <th>Teacher</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class in classes %}
+                <tr>
+                    <td>{{ class.class_id }}</td>
+                    <td>{{ class.class_name }}</td>
+                    <td>{{ class.description }}</td>
+                    <td>
+                        {% if class.teacher_name %}
+                            <a href="#" onclick="searchTeacher('{{ class.teacher_name }}')">{{ class.teacher_name }}</a>
+                        {% else %}
+                            No Teacher Assigned
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_class', class_id=class.class_id) }}" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
                 {% endfor %}
-            </select>
-            <select name="parent_id">
-                {% for user in users if user.role == 'Parent' %}
-                <option value="{{ user.user_id }}">{{ user.full_name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Link Student to Parent</button>
-        </form>
+            </tbody>
+        </table>
     </section>
 
-    <!-- Logout -->
-    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <!-- Teachers Section -->
+    <section id="teachers">
+        <h2>Manage Teachers</h2>
+
+        <!-- Search Teachers Form -->
+        <h3>Search Teachers</h3>
+        <input type="text" id="teacher-search-query" placeholder="Search by teacher name or email">
+        <button onclick="searchTeachers()">Search</button>
+
+        <!-- Teachers List -->
+        <h3>Teachers List</h3>
+        <table id="teachers-table">
+            <thead>
+                <tr>
+                    <th>Profile Picture</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td class="profile-picture-cell">
+                        <img src="{{ url_for('static', filename='profile_pictures/' ~ teacher.profile_picture) }}"
+                             alt="Profile Picture">
+                    </td>
+                    <td>{{ teacher.full_name }}</td>
+                    <td>{{ teacher.email }}</td>
+                    <td>{{ teacher.phone_number }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_user', user_id=teacher.user_id) }}" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- Parents Section -->
+    <section id="parents">
+        <h2>Manage Parents</h2>
+
+        <h3>Search Parents</h3>
+        <input type="text" id="parent-search-query" placeholder="Search by name, email, or phone">
+        <button onclick="searchParents()">Search</button>
+
+        <!-- Parents List -->
+        <h3>Parents List</h3>
+        <table id="parents-table">
+            <thead>
+                <tr>
+                    <th>Profile Picture</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for parent in parents %}
+                <tr>
+                    <td>
+                        <img src="{{ url_for('static', filename='profile_pictures/' ~ parent.profile_picture) }}"
+                             alt="Profile Picture" width="50" height="50">
+                    </td>
+                    <td>{{ parent.full_name }}</td>
+                    <td>{{ parent.email }}</td>
+                    <td>{{ parent.phone_number }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_user', user_id=parent.user_id) }}" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </section>
+
+    <!-- Students Section -->
+    <section id="students">
+        <h2>Manage Students</h2>
+
+        <h3>Search Students</h3>
+        <input type="text" id="student-search-query" placeholder="Search by name, username">
+        <button onclick="searchStudents()">Search</button>
+
+        <h3>Students List</h3>
+        <table id="students-table">
+            <thead>
+                <tr>
+                    <th>Profile Picture</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Class</th>
+                    <th>Email</th>
+                    <th>Parent</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td class="profile-picture-cell">
+                        <img src="{{ url_for('static', filename='profile_pictures/' ~ student.profile_picture) }}"
+                     alt="Profile Picture">
+                    </td>
+                    <td>{{ student.student_name }}</td>
+                    <td>{{ student.class_name if student.class_name else 'No Class Assigned' }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>
+                        {% if student.parent_name %}
+                            <a href="#" onclick="searchParent('{{ student.parent_name }}')">
+                                ({{ student.parent_id }}) {{ student.parent_name }}
+                            </a>
+                        {% else %}
+                            No Parent Assigned
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_user', user_id=student.student_id) }}" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+
 
 
     <!-- END DASHBOARD STRUCTURE / END DASHBOARD STRUCTURE / END DASHBOARD STRUCTURE -->
@@ -192,37 +362,37 @@
       //--------------- USERS ---------------
 
       // Function to search users
-      function searchUsers() {
-        const query = document.getElementById("user-search-query").value;
-        fetch(`/search_users?query=${query}`)
-          .then((response) => response.json())
-          .then((users) => {
-            const usersTableBody = document
-              .getElementById("users-table")
-              .getElementsByTagName("tbody")[0];
-            usersTableBody.innerHTML = ""; // Clear the table body
-            users.forEach((user) => {
-              const profilePictureUrl = user.profile_picture
-                ? `/static/profile_pictures/${user.profile_picture}`
-                : "/static/profile_pictures/default.jpg"; // Use a default image if no profile picture
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                          <td>${user.user_id}</td>
-                          <td>
-                              <img src="${profilePictureUrl}" alt="Profile Picture" width="60" height="60"> <!-- Display profile picture -->
-                          </td>
-                          <td>${user.username}</td>
-                          <td>${user.full_name}</td>
-                          <td>${user.email}</td>
-                          <td>${user.role}</td>
-                          <td>${user.created_at}</td>
-                          <td><button onclick="deleteUser(${user.user_id})">Delete</button></td>
-                      `;
-              usersTableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error:", error));
-      }
+        function searchUsers() {
+            const query = document.getElementById("user-search-query").value;
+            fetch(`/search_users?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(users => {
+                    const usersTableBody = document.querySelector("#users-table tbody");
+                    usersTableBody.innerHTML = ""; // Clear the current table body
+
+                    users.forEach(user => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td class="profile-picture-cell">
+                                <img src="/static/profile_pictures/${user.profile_picture || 'default.jpg'}"
+                                     alt="Profile Picture" width="50" height="50">
+                            </td>
+                            <td>${user.full_name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phone_number}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <form action="/delete_user/${user.user_id}" method="POST">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        `;
+                        usersTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
 
       // Function to delete a user
       function deleteUser(userId) {
@@ -295,41 +465,32 @@
         }
       }
 
-      // Update the searchClasses function to include the "Delete" button
-      function searchClasses() {
-        const query = document.getElementById("class-search-query").value;
-        fetch(`/search_classes?query=${query}`)
-          .then((response) => response.json())
-          .then((classes) => {
-            const classesTableBody = document
-              .getElementById("classes-table")
-              .getElementsByTagName("tbody")[0];
-            classesTableBody.innerHTML = ""; // Clear the table body
+        function searchClasses() {
+            const query = document.getElementById("class-search-query").value;
+            fetch(`/search_classes?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(classes => {
+                    const classesTableBody = document.querySelector("#classes-table tbody");
+                    classesTableBody.innerHTML = ""; // Clear the current table body
 
-            classes.forEach((classData) => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                          <td>${classData.class_id}</td>
-                          <td>${classData.class_name}</td>
-                          <td>${classData.description}</td>
-                          <td>
-                              ${
-                                classData.teacher_name
-                                  ? `<a href="#" onclick="viewTeacher(${classData.teacher_id})">(${classData.teacher_id}) ${classData.teacher_name}</a>`
-                                  : "No Teacher Assigned"
-                              }
-                          </td>
-                          <td>
-                              <button onclick="deleteClass(${
-                                classData.class_id
-                              })">Delete</button>
-                          </td>
-                      `;
-              classesTableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error:", error));
-      }
+                    classes.forEach(classData => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${classData.class_id}</td>
+                            <td>${classData.class_name}</td>
+                            <td>${classData.description}</td>
+                            <td>
+                                <form action="/delete_class/${classData.class_id}" method="POST">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        `;
+                        classesTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
 
       // Initial load of classes
       searchClasses();
@@ -339,7 +500,7 @@
       //--------------- TEACHERS ---------------
 
       // Function to view the teacher by teacher_id
-      function viewTeacher(teacherId) {
+      function searchTeacher(teacherId) {
         // Navigate to the teacher management section
         showSection("teachers");
 
@@ -350,38 +511,33 @@
 
       // Function to search and display teachers
       function searchTeachers() {
-        const query = document.getElementById("teacher-search-query").value;
-        fetch(`/search_teachers?query=${query}`)
-          .then((response) => response.json())
-          .then((teachers) => {
-            const teachersTableBody = document
-              .getElementById("teachers-table")
-              .getElementsByTagName("tbody")[0];
-            teachersTableBody.innerHTML = ""; // Clear the table body
+          const query = document.getElementById("teacher-search-query").value;
+          fetch(`/search_teachers?query=${encodeURIComponent(query)}`)
+              .then(response => response.json())
+              .then(teachers => {
+                  const teachersTableBody = document.getElementById("teachers-table").getElementsByTagName("tbody")[0];
+                  teachersTableBody.innerHTML = ""; // Clear the table body
 
-            teachers.forEach((teacher) => {
-              const profilePictureUrl = teacher.profile_picture
-                ? `/static/profile_pictures/${teacher.profile_picture}`
-                : "/static/profile_pictures/default.jpg"; // Use a default image if no profile picture
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                          <td>${teacher.teacher_id}</td>
-                          <td>
-                              <img src="${profilePictureUrl}" alt="Profile Picture" width="60" height="60"> <!-- Display profile picture -->
-                          </td>
-                          <td>${teacher.user_id}</td>
+                  teachers.forEach(teacher => {
+                      const profilePictureUrl = teacher.profile_picture
+                          ? `/static/profile_pictures/${teacher.profile_picture}`
+                          : "/static/profile_pictures/default.jpg"; // Use a default image if no profile picture
+                      const row = document.createElement("tr");
+                      row.innerHTML = `
+                          <td><img src="${profilePictureUrl}" alt="Profile Picture" width="50" height="50"></td>
                           <td>${teacher.full_name}</td>
                           <td>${teacher.email}</td>
                           <td>${teacher.phone_number}</td>
                           <td>
-                              <!-- Placeholder for actions like Delete -->
-                              <button onclick="deleteTeacher(${teacher.teacher_id})">Delete</button>
+                              <form action="/delete_user/${teacher.user_id}" method="POST">
+                                  <button type="submit">Delete</button>
+                              </form>
                           </td>
                       `;
-              teachersTableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error:", error));
+                      teachersTableBody.appendChild(row);
+                  });
+              })
+              .catch(error => console.error("Error:", error));
       }
 
       // Initial load of teachers
@@ -406,41 +562,46 @@
         }
       }
 
+      function searchParent(parentName) {
+        // Switch to the Parents section
+        showSection('parents');
+
+        // Set the search query for parents and perform the search
+        document.getElementById('parent-search-query').value = parentName;
+        searchParents();
+    }
+
       // Update the searchParents function to include the "parent_id"
       function searchParents() {
         const query = document.getElementById("parent-search-query").value;
-        fetch(`/search_parents?query=${query}`)
-          .then((response) => response.json())
-          .then((parents) => {
-            const parentsTableBody = document
-              .getElementById("parents-table")
-              .getElementsByTagName("tbody")[0];
-            parentsTableBody.innerHTML = ""; // Clear the table body
+        fetch(`/search_parents?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(parents => {
+                const parentsTableBody = document.querySelector("#parents-table tbody");
+                parentsTableBody.innerHTML = ""; // Clear the current table body
 
-            parents.forEach((parent) => {
-              const profilePictureUrl = parent.profile_picture
-                ? `/static/profile_pictures/${parent.profile_picture}`
-                : "/static/profile_pictures/default.jpg"; // Use a default image if no profile picture
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                          <td>${parent.parent_id}</td> <!-- Changed to parent_id -->
-                          <td>
-                              <img src="${profilePictureUrl}" alt="Profile Picture" width="60" height="60"> <!-- Display profile picture -->
-                          </td>
-                          <td>${parent.username}</td>
-                          <td>${parent.full_name}</td>
-                          <td>${parent.email}</td>
-                          <td>${parent.phone_number}</td>
-                          <td>
-                              <!-- Placeholder for future actions like Delete or Edit -->
-                              <button onclick="deleteParent(${parent.parent_id})">Delete</button>
-                          </td>
-                      `;
-              parentsTableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error:", error));
-      }
+                parents.forEach(parent => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>
+                            <img src="/static/profile_pictures/${parent.profile_picture || 'default.jpg'}"
+                                 alt="Profile Picture" width="50" height="50">
+                        </td>
+                        <td>${parent.full_name}</td>
+                        <td>${parent.email}</td>
+                        <td>${parent.phone_number}</td>
+                        <td>
+                            <form action="/delete_user/${parent.user_id}" method="POST">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    `;
+                    parentsTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
 
       // Initial load of parents
       searchParents();
@@ -452,47 +613,45 @@
       // Function to search and display students
       function searchStudents() {
         const query = document.getElementById("student-search-query").value;
-        fetch(`/search_students?query=${query}`)
-          .then((response) => response.json())
-          .then((students) => {
-            const studentsTableBody = document
-              .getElementById("students-table")
-              .getElementsByTagName("tbody")[0];
-            studentsTableBody.innerHTML = ""; // Clear the table body
+        fetch(`/search_students?query=${encodeURIComponent(query)}`)
+            .then((response) => response.json())
+            .then((students) => {
+                const studentsTableBody = document
+                    .getElementById("students-table")
+                    .getElementsByTagName("tbody")[0];
+                studentsTableBody.innerHTML = ""; // Clear the table body
 
-            students.forEach((student) => {
-              const profilePictureUrl = student.profile_picture
-                ? `/static/profile_pictures/${student.profile_picture}`
-                : "/static/profile_pictures/default.jpg"; // Use a default image if no profile picture
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                          <td>${student.student_id}</td>
-                          <td>
-                              <img src="${profilePictureUrl}" alt="Profile Picture" width="60" height="60"> <!-- Display profile picture -->
-                          </td>
-                          <td>${student.username}</td>
-                          <td>${student.student_name}</td>
-                          <td>${student.class_name || "No Class Assigned"}</td>
-                          <td>${student.email}</td>
-                          <td>
-                              ${
+                students.forEach((student) => {
+                    const profilePictureUrl = student.profile_picture
+                        ? `/static/profile_pictures/${student.profile_picture}`
+                        : "/static/profile_pictures/default.jpg"; // Use a default image if no profile picture
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>
+                            <img src="${profilePictureUrl}" alt="Profile Picture" width="60" height="60"> <!-- Display profile picture -->
+                        </td>
+                        <td>${student.username}</td>
+                        <td>${student.student_name}</td>
+                        <td>${student.class_name || "No Class Assigned"}</td>
+                        <td>${student.email}</td>
+                        <td>
+                            ${
                                 student.parent_name
-                                  ? `<a href="#" onclick="locateParent(${student.parent_id})">(${student.parent_id}) ${student.parent_name}</a>`
-                                  : "No Parent Assigned"
-                              }
-                          </td>
-                          <td>
-                              <!-- Placeholder for future actions like Delete or Edit -->
-                              <button onclick="deleteStudent(${
-                                student.student_id
-                              })">Delete</button>
-                          </td>
-                      `;
-              studentsTableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error:", error));
-      }
+                                    ? `<a href="#" onclick="searchParent('${student.parent_name}')">(${student.parent_id}) ${student.parent_name}</a>`
+                                    : "No Parent Assigned"
+                            }
+                        </td>
+                        <td>
+                            <!-- Placeholder for future actions like Delete or Edit -->
+                            <button onclick="deleteStudent(${student.student_id})">Delete</button>
+                        </td>
+                    `;
+                    studentsTableBody.appendChild(row);
+                });
+            })
+            .catch((error) => console.error("Error:", error));
+    }
+
 
       // Initial load of students
       searchStudents();
