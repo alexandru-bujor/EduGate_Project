@@ -145,36 +145,29 @@
 
 <script>
     // Loop over each student and render a chart
-    document.addEventListener('DOMContentLoaded', function() {
+    //document.addEventListener('DOMContentLoaded', function() {
     {% for student in students %}
-        const chartData = {
-            labels: ["On time", "Late", "Absent"],
-            //data: [70,20,10]
-            data: [{{ student.attendance_stats.on_time }}, {{ student.attendance_stats.late }}, {{ student.attendance_stats.absent }}]
-        }
-
-        var ctx = document.getElementById('chart-{{ student.student_id }}').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: chartData.labels,
-                datasets: [{
-                    data: chartData.data,
-                    backgroundColor: ['#4caf50', '#ff9800', '#f44336']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                borderWidth: 10,
-                borderRadius: 1,
-                hoverBorderWidth: 0,
-                plugins: {
+         var ctx = document.getElementById('chart-{{ student.student_id }}').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['On time', 'Late', 'Absent'],
+            datasets: [{
+                data: [{{ student.attendance_stats.on_time }}, {{ student.attendance_stats.late }}, {{ student.attendance_stats.absent }}],
+                backgroundColor: ['#4caf50', '#ff9800', '#f44336']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            borderRadius: 1,
+            hoverBorderWidth: 0,
+            plugins: {
                     legend: {
                         display: false,
                     }
                 }
-            }
+        }
         });
     {% endfor %}
 </script>
