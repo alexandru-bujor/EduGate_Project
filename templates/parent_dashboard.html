@@ -70,82 +70,112 @@
         </div>
 
         <div id="accordeon-container">
-    {% for student in students %}
-    <div class="accordeon">
-        <div class="contentBx">
-            <div class="label"> {{ student.student_full_name }}</div>
-            <div class="content">
-                <div class="child">
-                    <div class="person-data">
-                        <img src="/static/profile_pictures/{{ student.student_profile_picture }}" alt="Student Profile Picture" width="80" height="80">
+            <div class="accordeon">
+                {% for student in students %}
+                <div class="contentBx">
+                    <div class="label"> {{ student.student_full_name }}</div>
+                    <div class="content">
+                        <div class="child">
+                            <div class="person-data">
+                                <img src="/static/profile_pictures/{{ student.student_profile_picture }}" alt="Student Profile Picture" width="80" height="80">
 
-                        <p><span id="child-name">Full name: {{ student.student_full_name }}</span> <br>
-                        <span id="student-id">Student ID: {{ student.student_id }}</span><br>
-                        <span id="grade">Grade: {{ student.grade }}</span><br>
-                        <span id="grad-date">Expected graduation date: {{ student.graduation_date }}</span></p>
-                    </div>
-                    <div id="tables">
-                        <div class="child-stats" id="first">
-                            <p class="title"> Statistics <i class="bi bi-bar-chart"></i></p>
-                            <div class="child-chart">
-                                <div class="chart-container">
-                                    <canvas id="chart-{{ student.student_id }}" class="my-chart"></canvas>
-                                </div>
-                                <div class="details">
-                                    <ul>
-                                        <li>On time: <span class="percentage">{{ student.attendance_stats.on_time }}%</span></li>
-                                        <li>Late: <span class="percentage">{{ student.attendance_stats.late }}%</span></li>
-                                        <li>Absent: <span class="percentage">{{ student.attendance_stats.absent }}%</span></li>
-                                    </ul>
-                                </div>
+                                <p><span id="child-name">Full name: {{ student.student_full_name }}</span> <br>
+                                <span id="student-id">Student ID: {{ student.student_id }}</span><br>
+                                <span id="grade">Grade: {{ student.grade }}</span><br>
+                                <span id="grad-date">Expected graduation date: {{ student.graduation_date }}</span></p>
                             </div>
-                        </div>
-
-                        <div class="child-stats" id="second">
-                            <p class="title" id="history">Recent History <i class="bi bi-clock-history"></i></p>
-                            <div class="history-container">
-                                {% for attendance in student.attendance_records %}
-                                <div class="history-item">
-                                    <h3 class="history-date">{{ attendance.entry_time.strftime('%d %B %Y') }}</h3>
-                                    <div class="time">
-                                        <p>Entry:</p>
-                                        <p>{{ attendance.entry_time.strftime('%H:%M') }}</p>
-                                    </div>
-                                    <div class="time">
-                                        <p>Exit:</p>
-                                        <p>{{ attendance.exit_time.strftime('%H:%M') if attendance.exit_time else '-' }}</p>
+                            <div id="tables">
+                                <div class="child-stats" id="first">
+                                    <p class="title"> Statistics <i class="bi bi-bar-chart"></i></p>
+                                    <div class="child-chart">
+                                        <div class="chart-container">
+                                            <canvas id="chart-{{ student.student_id }}" class="my-chart"></canvas>
+                                        </div>
+                                        <div class="details">
+                                            <ul>
+                                                <li>On time: <span class="percentage">{{ student.attendance_stats.on_time }}%</span></li>
+                                                <li>Late: <span class="percentage">{{ student.attendance_stats.late }}%</span></li>
+                                                <li>Absent: <span class="percentage">{{ student.attendance_stats.absent }}%</span></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                                {% endfor %}
-                                <div class="dots" onclick="openModal(event)">...</div>
+
+                                <div class="child-stats" id="second">
+                                    <p class="title" id="history">Recent History <i class="bi bi-clock-history"></i></p>
+                                    <div class="history-container">
+                                        {% for attendance in student.attendance_records %}
+                                        <div class="history-item">
+                                            <h3 class="history-date">{{ attendance.entry_time.strftime('%d %B %Y') }}</h3>
+                                            <div class="time">
+                                                <p>Entry:</p>
+                                                <p>{{ attendance.entry_time.strftime('%H:%M') }}</p>
+                                            </div>
+                                            <div class="time">
+                                                <p>Exit:</p>
+                                                <p>{{ attendance.exit_time.strftime('%H:%M') if attendance.exit_time else '-' }}</p>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="dots" onclick="openModal(event)">...</div>
+                                    </div>
+                                </div>
                             </div>
+                            <!-- Modal Window -->
+                                        <div id="myModal" class="modal">
+                                            <div class="modal-content">
+                                                    <span class="close" onclick="closeModal()">&times;</span>
+                                                    <h2>Complete Details</h2>
+                                                {% for attendance in student.attendance_records %}
+                                                    <p><strong>Date:</strong> {{ attendance.entry_time.strftime('%d %B %Y') }}</p>
+                                                    <p><strong>Entry:</strong> {{ attendance.entry_time.strftime('%H:%M') }}</p>
+                                                    <p><strong>Exit:</strong> {{ attendance.exit_time.strftime('%H:%M') if attendance.exit_time else '-' }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>
-    {% endfor %}
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Loop over each student and render a chart
+    document.addEventListener('DOMContentLoaded', function() {
     {% for student in students %}
-    var ctx = document.getElementById('chart-{{ student.student_id }}').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['On time', 'Late', 'Absent'],
-            datasets: [{
-                data: [{{ student.attendance_stats.on_time }}, {{ student.attendance_stats.late }}, {{ student.attendance_stats.absent }}],
-                backgroundColor: ['#4caf50', '#ff9800', '#f44336']
-            }]
-        },
-        options: {
-            responsive: true
+        const chartData = {
+            labels: ["On time", "Late", "Absent"],
+            //data: [70,20,10]
+            data: [{{ student.attendance_stats.on_time }}, {{ student.attendance_stats.late }}, {{ student.attendance_stats.absent }}]
         }
-    });
+
+        var ctx = document.getElementById('chart-{{ student.student_id }}').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    data: chartData.data,
+                    backgroundColor: ['#4caf50', '#ff9800', '#f44336']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                borderWidth: 10,
+                borderRadius: 1,
+                hoverBorderWidth: 0,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                }
+            }
+        });
     {% endfor %}
 </script>
 
@@ -174,6 +204,33 @@
         function closeModal() {
             event.stopPropagation();
             document.getElementById("myModal").style.display = "none";
+        }
+
+         // Close the modal if the user clicks outside the modal content
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function openModalProfile(event) {
+            event.stopPropagation();  // Prevents the click event from affecting the accordion
+            document.getElementById("modalProfile").style.display = "block";
+        }
+
+
+        function closeModalProfile() {
+            event.stopPropagation();
+            document.getElementById("modalProfile").style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside the modal content
+        window.onclick = function(event) {
+            const modal = document.getElementById("modalProfile");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
         }
     </script>
 </body>
