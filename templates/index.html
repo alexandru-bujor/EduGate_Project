@@ -45,9 +45,6 @@
                 <a href="{{ url_for('login') }}" class="logIn btn">
                     <h1>Log In</h1>
                 </a>
-                <button type="button" id="signUpButton" class="singUp btn">
-                    <h1>Sign Up</h1>
-                </button>
             </div>
         </div>
         <div class="text1">
@@ -103,7 +100,7 @@
                 </div>
             </div>
             <div class="buttons">
-                <button id="prev"><<</button>
+                <button id="prev"><</button>
                 <button id="next">></button>
             </div>
             <ul class="dots">
@@ -152,7 +149,8 @@
             </div>
         </div>
     </div>
-    <script src="scripts.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
 </body>
 
 </html>

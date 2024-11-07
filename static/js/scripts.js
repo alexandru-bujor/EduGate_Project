@@ -6,32 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const signInButton = document.getElementById('signUpButton');
-
-    signInButton.addEventListener('click', function() {
-        window.location.href = 'signin_page.html';
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const studentButton = document.getElementById('createStudent');
-    const adminButton = document.getElementById('createAdmin');
-    const parentButton = document.getElementById('createParent');
-
-    studentButton.addEventListener('click', function() {
-        window.location.href = 'signin_data_page.html';
-    });
-
-    adminButton.addEventListener('click', function() {
-        window.location.href = 'signin_data_page.html'; 
-    });
-
-    parentButton.addEventListener('click', function() {
-        window.location.href = 'signin_data_page.html'; 
-    });
-});
-
 let list = document.querySelector('.card-wrapper .card-list');
 let items = document.querySelectorAll('.card-wrapper .card-list .card-item');
 let dots = document.querySelectorAll('.card-wrapper .dots li');
