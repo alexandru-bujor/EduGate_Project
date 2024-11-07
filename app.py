@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import mysql.connector
 import datetime
 
-
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Change this to a random secret key
 
@@ -65,18 +64,28 @@ def student_dashboard():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Query to fetch student details
+    # Fetch student details
     cursor.execute("""
-        SELECT u.full_name, u.profile_picture, s.uid 
+        SELECT u.full_name AS student_name, u.profile_picture
         FROM users u 
         JOIN students s ON u.user_id = s.user_id 
         WHERE u.user_id = %s
     """, (user_id,))
     user = cursor.fetchone()
 
+    # Fetch the parent details of the student
+    cursor.execute("""
+        SELECT pu.full_name AS parent_name
+        FROM students s
+        JOIN parents p ON s.parent_id = p.parent_id
+        JOIN users pu ON p.user_id = pu.user_id
+        WHERE s.user_id = %s
+    """, (user_id,))
+    parent = cursor.fetchone()
+
     # Fetch attendance records for the student
     cursor.execute("""
-        SELECT a.entry_time, a.exit_time, a.face_confirmation 
+        SELECT a.uid, a.entry_time, a.exit_time, a.face_confirmation 
         FROM attendance a 
         WHERE a.student_id = (SELECT student_id FROM students WHERE user_id = %s) 
         ORDER BY a.entry_time DESC
@@ -85,7 +94,36 @@ def student_dashboard():
 
     conn.close()
 
-    return render_template('student_dashboard.html', user=user, attendance_records=attendance_records)
+    return render_template('student_dashboard.html', user=user, parent=parent, attendance_records=attendance_records)
+
+# ------------------ TEACHER DASHBOARD ROUTE ------------------
+@app.route('/teacher_dashboard')
+def teacher_dashboard():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect('/login')  # Redirect if user is not logged in
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Fetch teacher details
+    cursor.execute("""
+        SELECT u.full_name, u.profile_picture
+        FROM users u
+        JOIN teachers t ON u.user_id = t.user_id
+        WHERE u.user_id = %s
+    """, (user_id,))
+    teacher = cursor.fetchone()
+
+    if not teacher:
+        return "Teacher not found or not linked properly."
+
+    # You can add additional data fetching as needed for the teacher
+
+    conn.close()
+    return render_template('teacher_dashboard.html', teacher=teacher)
+
+
 
 # ------------------ PARENT DASHBOARD ROUTE ------------------
 @app.route('/parent_dashboard')
@@ -188,15 +226,22 @@ def admin_dashboard():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Fetch all users to display in the admin dashboard
+    # Fetch admin user details
+    user_id = session['user_id']
+    cursor.execute("""
+        SELECT full_name, profile_picture 
+        FROM users 
+        WHERE user_id = %s
+    """, (user_id,))
+    admin = cursor.fetchone()
+
+    # Fetch additional data like users, classes, etc.
     cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
 
-    # Fetch all classes
     cursor.execute("SELECT * FROM classes")
     classes = cursor.fetchall()
 
-    # Fetch students for managing class and parent links
     cursor.execute("""
         SELECT s.student_id, s.user_id, u.full_name AS student_name, s.class_id, s.parent_id 
         FROM students s
@@ -206,7 +251,7 @@ def admin_dashboard():
 
     conn.close()
 
-    return render_template('admin_dashboard.html', users=users, classes=classes, students=students)
+    return render_template('admin_dashboard.html', admin=admin, users=users, classes=classes, students=students)
 
 # ------------------ ADD USER ROUTE ------------------
 @app.route('/add_user', methods=['POST'])

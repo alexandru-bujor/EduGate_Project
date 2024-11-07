@@ -25,8 +25,8 @@
                 <span class="closeModal" onclick="closeModalProfile()">×</span>
                 <div class="sections">
                     <a href="#">
-                        <img src="/images/jameson.png">
-                        <h2>Mr. Jameson</h2>
+                        <h2>Welcome, {{ admin.full_name }}</h2>
+                        <img src="/static/profile_pictures/{{ admin.profile_picture }}" alt="Profile Picture" width="60" height="60">
                     </a>
                 </div>
                 <hr style="border: 1px solid #00000046; width: 100%">
@@ -51,9 +51,9 @@
         <p id="dashboard">Dashboard</p>
         <hr>
         <div class="person-data">
-            <img src="images/jameson.png">
+            <img src="/static/profile_pictures/{{ admin.profile_picture }}" alt="Profile Picture" width="60" height="60">
             <p>
-                <span id="person-name">Mr. Jameson</span> <br>
+                <span id="person-name">{{ admin.full_name }}</span> <br>
                 <span id="name-second-line">School Administrator</span>
             </p>
         </div>
