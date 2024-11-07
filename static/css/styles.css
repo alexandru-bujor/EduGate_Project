@@ -41,7 +41,7 @@ body {
     gap: 1rem;
 }
 
-.logIn {
+.logIn, .singUp {
     padding: 0.5rem 1rem;
     display: flex;
     align-items: center;
@@ -54,7 +54,7 @@ body {
     border: 1px solid transparent;
 }
 
-.logIn h1 {
+.logIn h1, .singUp h1 {
     font-size: 1rem;
     font-weight: 400;
     margin: 0;
@@ -63,6 +63,11 @@ body {
 .logIn {
     background-color: white;
     color: var(--color2);
+}
+
+.singUp {
+    background-color: var(--color2);
+    color: white;
 }
 
 i.bi-book {
