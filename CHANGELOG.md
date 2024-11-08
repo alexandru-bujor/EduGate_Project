@@ -9,6 +9,7 @@ FAF EduGate PBL Project.
 - Logic for linking teachers and parents in the class and student sections.
 - Problems with displaying info from database records.
 - CSS errors on main page.
+- Improved design for all pages (Student, Parent, Admin Dashboards)
 
 ## [1.0.0] - 2024-10-01
 ### Initially Created
