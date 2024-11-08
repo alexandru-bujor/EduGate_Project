@@ -440,6 +440,72 @@ canvas{
     width: 100%;
 }
 
+/* Footer */
+
+.footer {
+    position: absolute;
+    background-color: var(--main-color);
+    height: 15rem;
+    width: 100%;
+    margin-top: 5rem;
+    border-top-left-radius: 60% 30%;
+    border-top-right-radius: 60% 30%;
+}
+
+.footer-content {
+    margin-top: 3rem;
+    margin-left: 1rem;
+}
+
+.info {
+    display: flex;
+    flex-direction: row;
+}
+
+.generalInfo {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin-top: 5px;
+}
+
+.listInfo {
+    display: flex;
+    flex-direction: row;
+}
+
+.listInfo i {
+    font-size: 1rem;
+    color: var(--color2);
+    margin-right: 15px;
+}
+
+.listInfo h1 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color2);
+}
+
+.otherInfo {
+    list-style: none;
+    color: var(--color2);
+    font-size: 1rem;
+    font-weight: 400;
+    margin-left: 50px;
+}
+
+.otherInfo li:first-child {
+    font-weight: 700;
+    color: black;
+    margin-bottom: 15px;
+}
+
+.otherInfo li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
 
 @media (max-width: 768px) {
     
