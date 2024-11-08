@@ -149,7 +149,7 @@ def teacher_dashboard():
 
 # ------------------ PARENT DASHBOARD ROUTE ------------------
 @dashboard_bp.route('/parent_dashboard')
-def parents_dashboard():
+def parent_dashboard():
     user_id = session.get('user_id')
     if not user_id:
         return redirect('/login')
