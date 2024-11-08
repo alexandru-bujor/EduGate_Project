@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2024 at 08:37 PM
+-- Generation Time: Nov 07, 2024 at 09:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,6 +38,30 @@ CREATE TABLE `admins` (
 
 INSERT INTO `admins` (`admin_id`, `user_id`) VALUES
 (1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendance`
+--
+
+CREATE TABLE `attendance` (
+  `attendance_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `uid` varchar(255) NOT NULL,
+  `entry_time` datetime DEFAULT NULL,
+  `exit_time` datetime DEFAULT NULL,
+  `session_number` int(11) NOT NULL,
+  `face_confirmation` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`attendance_id`, `student_id`, `uid`, `entry_time`, `exit_time`, `session_number`, `face_confirmation`) VALUES
+(4, 2, '04A123B678', '2024-10-01 22:52:51', NULL, 1, 1),
+(5, 5, 'AAAAA77777', '2024-10-02 11:02:11', NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -101,7 +125,8 @@ INSERT INTO `students` (`student_id`, `user_id`, `class_id`, `parent_id`) VALUES
 (1, 3, 1, 1),
 (2, 8, 2, 1),
 (3, 9, 2, 3),
-(4, 14, NULL, NULL);
+(4, 14, 2, 3),
+(5, 15, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -153,7 +178,8 @@ INSERT INTO `users` (`user_id`, `username`, `password_hash`, `role`, `full_name`
 (10, 'nataliapavlovskaia', 'volvoxc60', 'Parent', 'Natalia Pavlovskaia', 'pavlovskaia@mail.ru', '078777777', 'nataliapav.jpg', '2024-09-18 15:54:35'),
 (12, 'viorelbostan', 'utmbomba', 'Teacher', 'Viorel Bostan', 'bostik77@gmail.com', '060123123', 'bostan.jpg', '2024-09-19 10:57:00'),
 (13, 'dimaciorba', 'fcim123', 'Teacher', 'Dumitru Ciorba', 'dimas@mail.ru', '099111111', 'dimaciorba.jpg', '2024-09-19 16:40:52'),
-(14, 'victoriasecret', 'toyotachr', 'Student', 'Victoria Secret', 'vika@mail.com', '012323323', 'vika.jpg', '2024-09-19 17:35:07');
+(14, 'victoriasecret', 'toyotachr', 'Student', 'Victoria Secret', 'vika@mail.com', '012323323', 'vika.jpg', '2024-09-19 17:35:07'),
+(15, 'mihailjackovici', 'fordfiesta', 'Student', 'Mihai Mustea', 'mishanea@ford.md', '090123123', 'mishanea.jpg', '2024-10-02 07:56:58');
 
 --
 -- Indexes for dumped tables
@@ -165,6 +191,13 @@ INSERT INTO `users` (`user_id`, `username`, `password_hash`, `role`, `full_name`
 ALTER TABLE `admins`
   ADD PRIMARY KEY (`admin_id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`attendance_id`),
+  ADD KEY `student_id` (`student_id`);
 
 --
 -- Indexes for table `classes`
@@ -215,6 +248,12 @@ ALTER TABLE `admins`
   MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `classes`
 --
 ALTER TABLE `classes`
@@ -230,7 +269,7 @@ ALTER TABLE `parents`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `teachers`
@@ -242,7 +281,7 @@ ALTER TABLE `teachers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
@@ -253,6 +292,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `admins`
   ADD CONSTRAINT `admins_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`student_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `classes`
