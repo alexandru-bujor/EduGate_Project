@@ -41,6 +41,7 @@ form,
 table {
   margin: auto;
 }
+
 input,
 button {
   height: 40px;
@@ -135,9 +136,9 @@ table {
 }
 
 th {
-  background-color: #f2f2f2; /* Light gray background for headers */
-  color: #333; /* Dark text color for better readability */
-  text-align: left; /* Align text to the left */
+  background-color: #406a72; /* Light gray background for headers */
+  color: white; /* Dark text color for better readability */
+  text-align: center; /* Align text to the left */
 }
 
 #profile-photo {
@@ -159,6 +160,9 @@ th {
 
 td {
   background-color: #ffffff; /* White background for table cells */
+  align-content: center;
+  justify-content: center;
+  text-align: center;
 }
 
 tr:nth-child(even) td {
@@ -382,10 +386,16 @@ i.bi-book {
   margin-left: 20px;
 }
 
-/*#users-table {*/
-/*  margin-left: 20px;*/
-/*  !*margin-right: 20px;*!*/
-/*}*/
+#users-table {
+  border-collapse: collapse;
+    /*margin: 25px 0;*/
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin: auto;
+  border-radius: 5px;
+}
 
 #user-search-query {
   margin-left: 20px;
@@ -638,61 +648,13 @@ canvas {
   /* height: 10rem; */
 }
 
-#tables {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-evenly;
-  margin-top: 0;
-}
-
-.child-stats {
-  border: 2px solid #b1d1d4;
-  box-shadow: 0px 4px 8px rgb(34, 169, 178, 0.6);
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: baseline;
-  align-items: center;
-  flex-direction: column;
-  width: 40%;
-  /* height: 60vh; */
-  margin-top: 2vw;
-  margin-bottom: 3vw;
-}
-.child-stats .title {
-  position: relative;
-  padding: 10px;
-  width: 100%;
-  border-radius: 1rem 1rem 0 0;
-  border-bottom: 1px solid #b1d1d4;
-  background-color: white;
-  color: black;
-  font-family: Raleway;
-  font-weight: 600;
-  font-size: 1.7em;
-  margin-bottom: 3vw;
-  /* margin: 0; */
-}
-
-.child-stats:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px -7px #b1d1d4;
-}
-
-.child-stats .details ul {
-  list-style: none;
-  padding: 0;
-}
-
-.child-stats .details ul li {
-  font-size: 16px;
-  margin: 12px 0;
-}
-
-.child-stats .details .percentage {
-  font-weight: 700;
-  color: black;
-}
+/*#tables {*/
+/*  display: flex;*/
+/*  flex-direction: row;*/
+/*  width: 100%;*/
+/*  justify-content: space-evenly;*/
+/*  margin-top: 0;*/
+/*}*/
 
 .row {
   display: flex;
@@ -709,53 +671,6 @@ canvas {
 .column {
   flex: 1;
   /* font-family: "Habibi", serif; */
-}
-
-#history {
-  font-family: Raleway;
-  font-weight: 600;
-  font-size: 1.7em;
-  margin: 0;
-}
-
-.history-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 0;
-  height: 60%;
-  margin: 0;
-  width: 100%;
-}
-
-.history-item {
-  border: none;
-  border-bottom: 1px solid #ccc;
-  padding: 10px;
-  width: 100%;
-  text-align: left;
-}
-
-.dots {
-  margin: 0;
-  padding: 0;
-  font-size: 60px;
-  cursor: pointer;
-  display: block;
-  width: 100%;
-  text-align: center;
-}
-
-/* .history-label {
-    font-family: "Habibi", serif;
-    font-size: 1.5em;
-} */
-
-.history-date {
-  font-family: "Inter";
-  font-size: 0.8em;
-  color: #888;
-  text-align: left;
 }
 
 .modal {
