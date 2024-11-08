@@ -89,7 +89,9 @@
 
     <!-- Users Section -->
     <section id="users" class="active">
-        <h2 class="manage-users">Manage Users</h2>
+
+        <h2 class="manage">Manage Users</h2>
+        <h3 class="manage-users">Add Users</h3>
         <form id="add-user-form" action="{{ url_for('add_user') }}" method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password Hash" required>
@@ -97,12 +99,12 @@
             <input type="text" name="full_name" placeholder="Full Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="text" name="phone_number" placeholder="Phone Number" required>
-            <button type="submit">Add User</button>
+            <button class ="submit-button" type="submit">Add User</button>
         </form>
 
         <h3 class="manage-users">Search Users</h3>
         <input type="text" id="user-search-query" placeholder="Search by username, name">
-        <button onclick="searchUsers()">Search</button>
+        <button class="submit-button" onclick="searchUsers()">Search</button>
 
         <h3 class="manage-users">Users List</h3>
         <table id="users-table">
@@ -124,9 +126,9 @@
                     <td>{{ user.full_name }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.role }}</td>
-                    <td id="delete">
+                    <td>
                         <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST">
-                            <button type="submit">Delete</button>
+                            <button class="submit-button" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>

@@ -39,7 +39,7 @@ section.active {
 }
 form,
 table {
-  margin-bottom: 20px;
+  margin: auto;
 }
 input,
 button {
@@ -56,6 +56,31 @@ button {
   width: 24%; /* Width for input and button */
 }
 
+.submit-button {
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #406a72;
+  color: #ffffff;
+  transition: 0.3s ease;
+  margin-bottom: 15px;
+  width: auto;
+}
+
+.submit-button:hover {
+  background-color: #d4e3e2;
+  color: #406a72;
+}
+
+.submit-button:active {
+  background-color: #d4e3e2;
+  color: #406a72;
+  transform: scale(1.05);
+}
+
 select {
   height: 40px; /* Same height as inputs */
   line-height: 28px; /* Aligns text vertically */
@@ -70,6 +95,7 @@ select {
   width: 24%; /* Make sure this matches input/button width */
   appearance: none; /* Remove default styling in some browsers */
 }
+
 
 button {
   padding-right: 55px;
@@ -339,7 +365,17 @@ i.bi-book {
 }
 
 .manage-users {
+  margin-top: 20px;
   margin-left: 20px;
+}
+
+.manage {
+  margin-top: 20px;
+  margin-left: 20px;
+  font-weight: 100;
+  font-family: Abril FatFace;
+  color: var(--color2);
+
 }
 
 #add-user-form {
@@ -742,6 +778,42 @@ canvas {
   border: 1px solid #888;
   width: 80%;
   max-width: 500px;
+}
+
+/*The small profile*/
+.modalClass {
+    display: none;
+    position: fixed;
+    align-content: right;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border: none;
+}
+
+.modalContentProfile {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 1rem;
+    top: 4rem;
+    background-color: white;
+    padding: 2rem;
+    width: 15rem;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px 5px rgb(177, 209, 212);
+}
+
+.modalContentProfile :nth-child(2) {
+    margin-top: 1rem;
+}
+
+.modalContentProfile :nth-child(4) {
+    margin-bottom: 1rem;
 }
 
 .close {
