@@ -11,7 +11,7 @@ def add_user():
     # Get form data
     full_name = request.form['full_name']
     username = request.form['username']
-    password_hash = request.form['password']  # Consider hashing the password
+    password_hash = request.form['password']
     email = request.form['email']
     phone_number = request.form['phone_number']
     role = request.form['role']

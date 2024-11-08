@@ -13,7 +13,7 @@ def search_users():
 
     # Use LIKE with wildcard for partial matching
     cursor.execute("""
-        SELECT user_id, full_name, email, phone_number, role, profile_picture 
+        SELECT user_id, full_name, username, email, phone_number, role, profile_picture 
         FROM users 
         WHERE full_name LIKE %s OR email LIKE %s OR username LIKE %s
     """, (f"%{query}%", f"%{query}%", f"%{query}%"))
