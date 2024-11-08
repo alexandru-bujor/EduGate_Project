@@ -181,10 +181,6 @@ body {
     text-decoration: underline;
 }
 
-#text-to-signin{
-    font-size: 1vw;
- }
-
  #link-to-signin:hover{
     text-decoration: underline;
  }
