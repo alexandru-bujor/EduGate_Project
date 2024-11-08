@@ -38,7 +38,7 @@
             {% endif %}
         {% endwith %}
 
-        <form id="login-form" method="POST" action="{{ url_for('login') }}">
+        <form id="login-form" method="POST" action="{{ url_for('auth.login') }}">
             <p id="title_1" class="title">Phone number</p>
             <input id="username-field" class="login-form-field" type="text" name="phonenumber" pattern="\d{9}" placeholder="Phone number" required>
             <p id="title_2" class="title">Password</p>
