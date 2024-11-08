@@ -75,7 +75,7 @@
                 <span id="name-second-line">School Administrator</span>
             </p>
             <!-- Logout -->
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <button class="logout"><a href="{{ url_for('logout') }}">Logout</a></button>
         </div>
     </div>
 
@@ -89,7 +89,7 @@
 
     <!-- Users Section -->
     <section id="users" class="active">
-        <h2>Manage Users</h2>
+        <h2 class="manage-users">Manage Users</h2>
         <form id="add-user-form" action="{{ url_for('add_user') }}" method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password Hash" required>
@@ -100,15 +100,15 @@
             <button type="submit">Add User</button>
         </form>
 
-        <h3>Search Users</h3>
+        <h3 class="manage-users">Search Users</h3>
         <input type="text" id="user-search-query" placeholder="Search by username, name">
         <button onclick="searchUsers()">Search</button>
 
-        <h3>Users List</h3>
+        <h3 class="manage-users">Users List</h3>
         <table id="users-table">
             <thead>
                 <tr>
-                    <th>Profile Photo</th>
+                    <th id="profile-photo">Profile Photo</th>
                     <th>Full Name</th>
                     <th>Email</th>
                     <th>Phone Number</th>
@@ -124,7 +124,7 @@
                     <td>{{ user.full_name }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.role }}</td>
-                    <td>
+                    <td id="delete">
                         <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST">
                             <button type="submit">Delete</button>
                         </form>
