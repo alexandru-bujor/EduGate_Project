@@ -3,6 +3,6 @@ class Config:
     DATABASE_SETTINGS = {
         'host': 'localhost',
         'user': 'root',
-        'password': '',  # Your MySQL password
+        'password': '',
         'database': 'school_access'
     }

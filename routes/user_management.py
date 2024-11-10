@@ -38,8 +38,7 @@ def add_user():
     cursor.close()
     conn.close()
 
-    flash('User added successfully!')
-    return redirect(url_for('dashboard.admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='add_user_success'))
 
 
 @user_management_bp.route('/delete_user/<int:user_id>', methods=['POST'])
@@ -54,5 +53,4 @@ def delete_user(user_id):
     cursor.close()
     conn.close()
 
-    flash('User deleted successfully!')
-    return redirect(url_for('dashboard.admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='delete_user_success'))

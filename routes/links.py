@@ -31,14 +31,13 @@ def link_teacher_to_class():
     try:
         cursor.execute("UPDATE classes SET teacher_id = %s WHERE class_id = %s", (teacher_id, class_id))
         conn.commit()
-        flash("Teacher linked to class successfully!")
     except mysql.connector.Error as err:
         flash(f"Error: {err}")
     finally:
         cursor.close()
         conn.close()
 
-    return redirect(url_for('dashboard.admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='link_teacher_to_class_success'))
 
 
 # ------------------ LINK STUDENT TO CLASS ROUTE ------------------
@@ -59,8 +58,7 @@ def link_student_class():
     cursor.close()
     conn.close()
 
-    flash('Student linked to class successfully!')
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='link_student_to_class_success'))
 
 # ------------------ LINK STUDENT TO PARENT ROUTE ------------------
 @links.route('/link_student_parent', methods=['POST'])
@@ -80,5 +78,4 @@ def link_student_parent():
     cursor.close()
     conn.close()
 
-    flash('Student linked to parent successfully!')
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='link_student_to_parent_success'))

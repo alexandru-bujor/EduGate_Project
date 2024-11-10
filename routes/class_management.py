@@ -18,8 +18,7 @@ def add_class():
     cursor.close()
     conn.close()
 
-    flash('Class added successfully!')
-    return redirect(url_for('dashboard.admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='add_class_success'))
 
 @class_management_bp.route('/delete_class/<int:class_id>', methods=['POST'])
 def delete_class(class_id):
@@ -33,5 +32,4 @@ def delete_class(class_id):
     cursor.close()
     conn.close()
 
-    flash('Class deleted successfully!')
-    return redirect(url_for('dashboard.admin_dashboard'))
+    return redirect(url_for('dashboard.admin_dashboard', action='delete_class_success'))

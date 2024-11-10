@@ -30,7 +30,7 @@ def admin_dashboard():
 
     # Fetch parents with their details
     cursor.execute("""
-        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
+        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture, p.parent_id
         FROM users u
         JOIN parents p ON u.user_id = p.user_id
     """)
@@ -70,9 +70,9 @@ def admin_dashboard():
         admin=admin,
         users=users,
         classes=classes,
+        students=students,
         teachers=teachers,
-        parents=parents,
-        students=students
+        parents=parents
     )
 
 
