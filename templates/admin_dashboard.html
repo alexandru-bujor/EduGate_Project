@@ -42,8 +42,8 @@
                 <span class="closeModal" onclick="closeModalProfile()">×</span>
                 <div class="sections">
                     <a href="#">
-                        <h2>Welcome, {{ admin.full_name }}</h2>
                         <img src="/static/profile_pictures/{{ admin.profile_picture }}" alt="Profile Picture" width="60" height="60">
+                        <h2>Welcome, {{ admin.full_name }}</h2>
                     </a>
                 </div>
                 <hr style="border: 1px solid #00000046; width: 100%">
@@ -55,9 +55,9 @@
                     </a>
                 </div>
                 <div class="sections">
-                    <a href="login_page.html">
+                    <a href="{{ url_for('auth.logout') }}">
                         <i class="bi bi-box-arrow-right"></i>
-                        <h2>Sign out</h2>
+                        <h2>Log out</h2>
                     </a>
                 </div>
             </div>
@@ -73,8 +73,6 @@
                 <span id="person-name">{{ admin.full_name }}</span> <br>
                 <span id="name-second-line">School Administrator</span>
             </p>
-            <!-- Logout -->
-        <button class="logout"><a href="{{ url_for('auth.logout') }}">Logout</a></button>
         </div>
     </div>
 
@@ -98,6 +96,7 @@
             <input type="text" name="full_name" placeholder="Full Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="text" name="phone_number" placeholder="Phone Number" required>
+            <input type="text" name="profile_picture" placeholder="Profile Picture" required>
             <button class ="submit-button" type="submit">Add User</button>
         </form>
 
@@ -298,10 +297,6 @@
     <section id="students">
         <h2>Manage Students</h2>
 
-        <h3>Search Students</h3>
-        <input type="text" id="student-search-query" placeholder="Search by name, username">
-        <button onclick="searchStudents()">Search</button>
-
         <h3>Link Student to Class</h3>
         <form id="link-student-class-form" action="{{ url_for('links.link_student_class') }}" method="POST">
             <label for="student_id-class">Select Student:</label>
@@ -341,6 +336,10 @@
 
             <button type="submit">Link Student to Parent</button>
         </form>
+
+        <h3>Search Students</h3>
+        <input type="text" id="student-search-query" placeholder="Search by name, username">
+        <button onclick="searchStudents()">Search</button>
 
         <h3>Students List</h3>
         <table id="students-table">

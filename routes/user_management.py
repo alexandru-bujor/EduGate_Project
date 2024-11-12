@@ -15,15 +15,16 @@ def add_user():
     email = request.form['email']
     phone_number = request.form['phone_number']
     role = request.form['role']
+    profile_picture = request.form['profile_picture']
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Insert into users table
     cursor.execute("""
-        INSERT INTO users (username, password_hash, full_name, email, phone_number, role) 
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (username, password_hash, full_name, email, phone_number, role))
+        INSERT INTO users (username, password_hash, full_name, email, phone_number, role, profile_picture) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (username, password_hash, full_name, email, phone_number, role, profile_picture))
     user_id = cursor.lastrowid  # Get the ID of the newly created user
 
     # Insert into role-specific table
