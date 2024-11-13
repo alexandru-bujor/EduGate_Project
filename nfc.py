@@ -8,7 +8,6 @@ from smartcard.util import toHexString
 db = pymysql.connect(host='localhost', user='root', password='', database='school_access')
 cursor = db.cursor()
 
-
 # Main NFC tracking function
 def track_nfc():
     last_uid = None  # Track the last detected UID
@@ -76,28 +75,6 @@ def read_nfc_card():
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
-
-# Main NFC tracking function
-def track_nfc():
-    last_uid = None  # Track the last detected UID
-    last_read_time = 0  # Track the last read time
-
-    while True:
-        uid = read_nfc_card()
-
-        if uid and (uid != last_uid or (time.time() - last_read_time) >= 10):
-            student_id = get_student_id_by_uid(uid)
-            if student_id:
-                # Log entry if student ID exists
-                log_attendance_entry(student_id, uid)
-                print(f"User with UID {uid} entered the system.")
-                last_uid = uid  # Update the last UID
-                last_read_time = time.time()  # Update the last read time
-            else:
-                print(f"No student associated with UID {uid}. Please register.")
-        else:
-            if uid:
-                print(f"UID {uid} detected, but cooldown is active.")
 
 if __name__ == "__main__":
     try:

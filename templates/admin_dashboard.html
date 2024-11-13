@@ -26,6 +26,11 @@
 </head>
 
 <body>
+    {% if action %}
+        <script>
+            alert("{{ action }}");
+        </script>
+    {% endif %}
     <div class="header">
         <div class="elements1">
             <div class="name d-flex align-items-center">

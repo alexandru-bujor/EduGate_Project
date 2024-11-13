@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_login.css') }}">
 </head>
 <body>
+    {% if action %}
+        <script>
+            alert("{{ action }}");
+        </script>
+    {% endif %}
     <img src="{{ url_for('static', filename='images/background.jpg') }}">
     <div class="header">
         <div class="elements1">
