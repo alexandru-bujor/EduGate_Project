@@ -1,7 +1,19 @@
 from flask import Blueprint, request, redirect, url_for, flash, session
 from utils.db import get_db_connection
+from argon2 import PasswordHasher
 
+ph = PasswordHasher()
 user_management_bp = Blueprint('user_management', __name__)
+
+def hash_password(password):
+    return ph.hash(password)
+
+def verify_password(stored_hash, provided_password):
+    try:
+        ph.verify(stored_hash, provided_password)
+        return True
+    except:
+        return False
 
 @user_management_bp.route('/add_user', methods=['POST'])
 def add_user():
@@ -11,7 +23,8 @@ def add_user():
     # Get form data
     full_name = request.form['full_name']
     username = request.form['username']
-    password_hash = request.form['password']
+    password = request.form['password']
+    password_hash = hash_password(password)
     email = request.form['email']
     phone_number = request.form['phone_number']
     role = request.form['role']

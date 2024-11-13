@@ -1,22 +1,24 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from utils.db import get_db_connection
-
+from routes.user_management import verify_password
 auth_bp = Blueprint('auth', __name__)
 
 # ------------------ LOGIN ROUTE ------------------
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        phone = request.form['phonenumber']
+        username = request.form['username']
         password = request.form['password']
 
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM users WHERE phone_number = %s", (phone,))
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cursor.fetchone()
 
-        if user and user['password_hash'] == password:  # Consider hashing and checking the password
+        password_match = verify_password(user['password_hash'], password)
+
+        if user and password_match:  # Consider hashing and checking the password
             session['user_id'] = user['user_id']  # Store user id in session
             session['role'] = user['role']  # Store user role in session
 

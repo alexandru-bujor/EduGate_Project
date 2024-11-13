@@ -30,8 +30,8 @@
     <main id="main-holder">
         <h1 id="login-header">Log In</h1>
         <form id="login-form" method="POST" action="{{ url_for('auth.login') }}">
-            <p id="title_1" class="title">Phone number</p>
-            <input id="username-field" class="login-form-field" type="text" name="phonenumber" pattern="\d{9}" placeholder="Phone number" required>
+            <p id="title_1" class="title">Username</p>
+            <input id="username-field" class="login-form-field" type="text" name="username" placeholder="Username" required>
             <p id="title_2" class="title">Password</p>
             <input id="password-field" class="login-form-field" type="password" name="password" placeholder="Password" required>
             <p id="title_3" class="title">Forgot password?</p>
