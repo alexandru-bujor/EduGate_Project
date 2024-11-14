@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from utils.db import get_db_connection
 from routes.user_management import verify_password
+from bson.objectid import ObjectId
+
 auth_bp = Blueprint('auth', __name__)
 
 # ------------------ LOGIN ROUTE ------------------
@@ -10,38 +12,47 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
+        db = get_db_connection()
+        pbl_db_collection = db['pbl_db']
 
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-        user = cursor.fetchone()
+        # Fetch the user data from the 'users' table document
+        users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
+        if users_doc and 'data' in users_doc:
+            # Iterate through the users in the 'data' array
+            for user in users_doc['data']:
+                print(f"Checking user: {user['username']}")
 
-        if user:
-            password_match = verify_password(user['password_hash'], password)
-            if password_match:  # Consider hashing and checking the password
-                session['user_id'] = user['user_id']  # Store user id in session
-                session['role'] = user['role']  # Store user role in session
+                # Check if the username and password match
+                if user.get('username') == username:
+                    password_match = verify_password(user['password_hash'], password)
+                    if password_match:
+                        session['user_id'] = user.get('user_id')
+                        session['role'] = user.get('role')
 
-                # Redirect to different dashboards based on role
-                if user['role'] == 'Student':
-                    return redirect(url_for('dashboard.student_dashboard'))
-                elif user['role'] == 'Teacher':
-                    return redirect(url_for('dashboard.teacher_dashboard'))
-                elif user['role'] == 'Parent':
-                    return redirect(url_for('dashboard.parent_dashboard'))
-                elif user['role'] == 'Admin':
-                    return redirect(url_for('dashboard.admin_dashboard'))
+                        print(f"Login successful for user: {user['username']}, Role: {user['role']}")
+
+                        # Redirect based on the user's role
+                        if user['role'] == 'Admin':
+                            return redirect(url_for('dashboard.admin_dashboard'))
+                        elif user['role'] == 'Student':
+                            return redirect(url_for('dashboard.student_dashboard'))
+                        elif user['role'] == 'Teacher':
+                            return redirect(url_for('dashboard.teacher_dashboard'))
+                        elif user['role'] == 'Parent':
+                            return redirect(url_for('dashboard.parent_dashboard'))
+                        else:
+                            flash('Invalid role')
+                            return render_template('login.html', action="Invalid role!")
+                    else:
+                        flash('Invalid password')
+                        return render_template('login.html', action="Invalid password!")
                 else:
-                    flash('Invalid role')
-                    return render_template("login.html", action="Invalid role!")
-            else:
-                flash('Invalid password')
-                return render_template("login.html", action="Invalid password!")
-        else:
-            flash('Username not found')
-            return render_template("login.html", action="Invalid username!")
+                    flash('Username not found')
+                    return render_template('login.html', action="Invalid username!")
 
-
+        flash('Invalid username or password')
+        print("Login failed: Invalid username or password")
+        return redirect(url_for('auth.login'))
 
     return render_template('login.html')
 

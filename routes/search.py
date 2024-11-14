@@ -3,48 +3,84 @@ from utils.db import get_db_connection
 
 search = Blueprint('search', __name__)
 
-
 # ------------------ SEARCH USERS ROUTE ------------------
 @search.route('/search_users')
 def search_users():
-    query = request.args.get('query', '')
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    db = get_db_connection()
+    users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
 
-    # Use LIKE with wildcard for partial matching
-    cursor.execute("""
-        SELECT user_id, full_name, username, email, phone_number, role, profile_picture 
-        FROM users 
-        WHERE full_name LIKE %s OR email LIKE %s OR username LIKE %s
-    """, (f"%{query}%", f"%{query}%", f"%{query}%"))
-    users = cursor.fetchall()
+    if not users_doc:
+        return jsonify([])
 
-    conn.close()
+    # Use MongoDB regex for partial matching with case-insensitivity
+    regex_query = {'$regex': query, '$options': 'i'}
+    users = []
+
+    for user in users_doc['data']:
+        full_name = user.get('full_name', '').strip()
+        email = user.get('email', '')
+        username = user.get('username', '')
+
+        # Case-insensitive search using $regex with 'i' option
+        if (regex_query['$regex'].lower() in full_name.lower() or
+            regex_query['$regex'].lower() in email.lower() or
+            regex_query['$regex'].lower() in username.lower()):
+            users.append({
+                'user_id': user.get('user_id'),
+                'full_name': full_name,
+                'username': username,
+                'email': email,
+                'phone_number': user.get('phone_number'),
+                'role': user.get('role'),
+                'profile_picture': user.get('profile_picture')
+            })
+
     return jsonify(users)
+
+
 
 
 # ------------------ SEARCH STUDENTS ROUTE ------------------
 @search.route('/search_students')
 def search_students():
-    query = request.args.get('query', '')
+    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    db = get_db_connection()
+    users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
+    students_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'students'})
+    classes_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'classes'})
+    parents_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'parents'})
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    if not (users_doc and students_doc):
+        return jsonify([])
 
-    # Modify the query to include username and profile picture
-    cursor.execute("""
-        SELECT s.student_id, u.username, u.full_name AS student_name, u.email, u.profile_picture, 
-               c.class_name, pu.full_name AS parent_name, p.parent_id
-        FROM students s
-        JOIN users u ON s.user_id = u.user_id
-        LEFT JOIN classes c ON s.class_id = c.class_id
-        LEFT JOIN parents p ON s.parent_id = p.parent_id
-        LEFT JOIN users pu ON p.user_id = pu.user_id
-        WHERE u.full_name LIKE %s OR u.username LIKE %s
-    """, (f"%{query}%", f"%{query}%"))
+    query_lower = query.lower()
+    students = []
 
-    students = cursor.fetchall()
-    conn.close()
+    for student in students_doc['data']:
+        user = next((u for u in users_doc['data'] if u['user_id'] == student['user_id']), {})
+        class_info = next((c for c in classes_doc['data'] if c['class_id'] == student.get('class_id')), {})
+        parent = next((p for p in parents_doc['data'] if p['parent_id'] == student.get('parent_id')), {})
+        parent_user = next((u for u in users_doc['data'] if u['user_id'] == parent.get('user_id')), {})
+
+        # Extract fields and strip whitespace
+        full_name = user.get('full_name', '').strip()
+        username = user.get('username', '').strip()
+        email = user.get('email', '').strip()
+
+        # Perform case-insensitive search
+        if (query_lower in full_name.lower() or
+            query_lower in username.lower() or
+            query_lower in email.lower()):
+            students.append({
+                'student_id': student['student_id'],
+                'username': username,
+                'student_name': full_name,
+                'email': email,
+                'profile_picture': user.get('profile_picture'),
+                'class_name': class_info.get('class_name'),
+                'parent_name': parent_user.get('full_name')
+            })
 
     return jsonify(students)
 
@@ -52,64 +88,89 @@ def search_students():
 # ------------------ SEARCH PARENTS ROUTE ------------------
 @search.route('/search_parents')
 def search_parents():
-    query = request.args.get('query', '')
+    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    db = get_db_connection()
+    users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
+    parents_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'parents'})
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    if not (users_doc and parents_doc):
+        return jsonify([])
 
-    # Search parents by name or email
-    cursor.execute("""
-        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
-        FROM users u
-        JOIN parents p ON u.user_id = p.user_id
-        WHERE u.full_name LIKE %s OR u.email LIKE %s
-    """, (f"%{query}%", f"%{query}%"))
+    query_lower = query.lower()
+    parents = []
 
-    parents = cursor.fetchall()
+    for parent in parents_doc['data']:
+        user = next((u for u in users_doc['data'] if u['user_id'] == parent['user_id']), {})
 
-    conn.close()
+        # Extract fields and strip whitespace
+        full_name = user.get('full_name', '').strip()
+        email = user.get('email', '').strip()
+
+        # Perform case-insensitive search
+        if (query_lower in full_name.lower() or
+            query_lower in email.lower()):
+            parents.append({
+                'user_id': user.get('user_id'),
+                'full_name': full_name,
+                'email': email,
+                'phone_number': user.get('phone_number'),
+                'profile_picture': user.get('profile_picture')
+            })
 
     return jsonify(parents)
+
 
 
 # ------------------ SEARCH CLASSES ROUTE ------------------
 @search.route('/search_classes')
 def search_classes():
     query = request.args.get('query', '')
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    db = get_db_connection()
+    classes_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'classes'})
 
-    # Use LIKE with wildcard for partial matching
-    cursor.execute("""
-        SELECT class_id, class_name, description 
-        FROM classes 
-        WHERE class_name LIKE %s OR description LIKE %s
-    """, (f"%{query}%", f"%{query}%"))
-    classes = cursor.fetchall()
+    if not classes_doc:
+        return jsonify([])
 
-    conn.close()
+    regex_query = {'$regex': query, '$options': 'i'}
+    classes = [
+        c for c in classes_doc['data']
+        if (regex_query['$regex'] in c.get('class_name', '') or
+            regex_query['$regex'] in c.get('description', ''))
+    ]
+
     return jsonify(classes)
 
 
 # ------------------ SEARCH TEACHERS ROUTE ------------------
 @search.route('/search_teachers')
 def search_teachers():
-    query = request.args.get('query', '')
+    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    db = get_db_connection()
+    users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
+    teachers_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'teachers'})
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    if not (users_doc and teachers_doc):
+        return jsonify([])
 
-    # Search teachers by name or email
-    cursor.execute("""
-        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
-        FROM users u
-        JOIN teachers t ON u.user_id = t.user_id
-        WHERE u.full_name LIKE %s OR u.email LIKE %s
-    """, (f"%{query}%", f"%{query}%"))
+    query_lower = query.lower()
+    teachers = []
 
-    teachers = cursor.fetchall()
+    for teacher in teachers_doc['data']:
+        user = next((u for u in users_doc['data'] if u['user_id'] == teacher['user_id']), {})
 
-    conn.close()
+        # Extract fields and strip whitespace
+        full_name = user.get('full_name', '').strip()
+        email = user.get('email', '').strip()
+
+        # Perform case-insensitive search
+        if (query_lower in full_name.lower() or
+            query_lower in email.lower()):
+            teachers.append({
+                'user_id': user.get('user_id'),
+                'full_name': full_name,
+                'email': email,
+                'phone_number': user.get('phone_number'),
+                'profile_picture': user.get('profile_picture')
+            })
 
     return jsonify(teachers)
-

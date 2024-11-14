@@ -1,5 +1,7 @@
-import mysql.connector
-from config import Config
+from pymongo import MongoClient
 
 def get_db_connection():
-    return mysql.connector.connect(**Config.DATABASE_SETTINGS)
+    client = MongoClient(
+        "mongodb+srv://sandumagla:QHpB0YxzKyhPLmuw@test.zpzjq.mongodb.net/School_Acces?retryWrites=true&w=majority"
+    )
+    return client['School_Acces']

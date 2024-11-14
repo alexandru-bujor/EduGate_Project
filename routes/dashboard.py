@@ -3,72 +3,74 @@ import datetime
 from flask import Blueprint, render_template, session, redirect, url_for
 from utils.db import get_db_connection
 
-dashboard_bp = Blueprint('dashboard', __name__)
+from flask import Blueprint, render_template, session, redirect, url_for, flash
+from utils.db import get_db_connection
 
+dashboard_bp = Blueprint('dashboard', __name__)
 
 # ------------------ ADMIN DASHBOARD ROUTE ------------------
 @dashboard_bp.route('/admin_dashboard')
 def admin_dashboard():
     if 'user_id' not in session or session.get('role') != 'Admin':
-        return redirect(url_for('login'))  # Only allow admins to access this page
+        return redirect(url_for('login'))
 
     user_id = session['user_id']
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    db = get_db_connection()
+    pbl_db_collection = db['pbl_db']
 
     # Fetch admin details
-    cursor.execute("SELECT full_name, profile_picture FROM users WHERE user_id = %s", (user_id,))
-    admin = cursor.fetchone()
+    users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
+    admin = next((user for user in users_doc['data'] if str(user['user_id']) == user_id), None)
 
-    # Fetch teachers with their details
-    cursor.execute("""
-        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture
-        FROM users u
-        JOIN teachers t ON u.user_id = t.user_id
-    """)
-    teachers = cursor.fetchall()
+    # Fetch teachers
+    teachers_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'teachers'})
+    teachers = []
+    if teachers_doc:
+        for teacher in teachers_doc['data']:
+            user = next((u for u in users_doc['data'] if u['user_id'] == teacher['user_id']), {})
+            teachers.append({**user, 'teacher_id': teacher.get('teacher_id')})
 
-    # Fetch parents with their details
-    cursor.execute("""
-        SELECT u.user_id, u.full_name, u.email, u.phone_number, u.profile_picture, p.parent_id
-        FROM users u
-        JOIN parents p ON u.user_id = p.user_id
-    """)
-    parents = cursor.fetchall()
+    # Fetch parents
+    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
+    parents = []
+    if parents_doc:
+        for parent in parents_doc['data']:
+            user = next((u for u in users_doc['data'] if u['user_id'] == parent['user_id']), {})
+            parents.append({**user, 'parent_id': parent.get('parent_id')})
 
-    # Fetch students with details, including linked parent and class information
-    cursor.execute("""
-        SELECT s.student_id, s.user_id, u.full_name AS student_name, s.class_id, s.parent_id, u.email, u.phone_number, u.profile_picture,
-               c.class_name, c.description AS class_description, pu.full_name AS parent_name
-        FROM students s
-        JOIN users u ON s.user_id = u.user_id
-        LEFT JOIN classes c ON s.class_id = c.class_id
-        LEFT JOIN parents p ON s.parent_id = p.parent_id
-        LEFT JOIN users pu ON p.user_id = pu.user_id
-    """)
-    students = cursor.fetchall()
+    # Fetch students
+    students_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'students'})
+    classes_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'classes'})
+    students = []
+    if students_doc:
+        for student in students_doc['data']:
+            user = next((u for u in users_doc['data'] if u['user_id'] == student['user_id']), {})
+            student_class = next((c for c in classes_doc['data'] if c['class_id'] == student.get('class_id')), {})
+            parent_user = next((u for u in users_doc['data'] if u['user_id'] == student.get('parent_id')), {})
+            students.append({
+                'student_id': student.get('student_id'),
+                'student_name': user.get('full_name'),
+                'class_name': student_class.get('class_name'),
+                'parent_name': parent_user.get('full_name'),
+                'profile_picture': user.get('profile_picture')
+            })
 
-    # Fetch all users for user management
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
+    # Fetch classes
+    classes = []
+    if classes_doc:
+        for class_item in classes_doc['data']:
+            teacher = next((t for t in teachers if t['user_id'] == class_item.get('teacher_id')), {})
+            classes.append({
+                'class_id': class_item.get('class_id'),
+                'class_name': class_item.get('class_name'),
+                'description': class_item.get('description'),
+                'teacher_name': teacher.get('full_name')
+            })
 
-    # Fetch all classes with linked teacher information
-    cursor.execute("""
-        SELECT c.class_id, c.class_name, c.description, t.teacher_id, u.full_name AS teacher_name, u.profile_picture AS teacher_picture
-        FROM classes c
-        LEFT JOIN teachers t ON c.teacher_id = t.teacher_id
-        LEFT JOIN users u ON t.user_id = u.user_id
-    """)
-    classes = cursor.fetchall()
-
-    # Close the connection
-    conn.close()
-
-    # Render the template with all the data
     return render_template(
         'admin_dashboard.html',
         admin=admin,
-        users=users,
+        users=users_doc['data'],
         classes=classes,
         students=students,
         teachers=teachers,
@@ -81,42 +83,22 @@ def admin_dashboard():
 def student_dashboard():
     user_id = session.get('user_id')
     if not user_id:
-        return redirect('/login')  # Redirect if user is not logged in
+        return redirect('/login')
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    db = get_db_connection()
+    pbl_db_collection = db['pbl_db']
 
     # Fetch student details
-    cursor.execute("""
-        SELECT u.full_name AS student_name, u.profile_picture
-        FROM users u 
-        JOIN students s ON u.user_id = s.user_id 
-        WHERE u.user_id = %s
-    """, (user_id,))
-    user = cursor.fetchone()
+    users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
+    students_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'students'})
+    student = next((s for s in students_doc['data'] if str(s['user_id']) == user_id), None)
+    user = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), {})
 
-    # Fetch the parent details of the student
-    cursor.execute("""
-        SELECT pu.full_name AS parent_name
-        FROM students s
-        JOIN parents p ON s.parent_id = p.parent_id
-        JOIN users pu ON p.user_id = pu.user_id
-        WHERE s.user_id = %s
-    """, (user_id,))
-    parent = cursor.fetchone()
+    # Fetch parent details
+    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
+    parent = next((p for p in parents_doc['data'] if p.get('parent_id') == student.get('parent_id')), {})
 
-    # Fetch attendance records for the student
-    cursor.execute("""
-        SELECT a.uid, a.entry_time, a.exit_time, a.face_confirmation 
-        FROM attendance a 
-        WHERE a.student_id = (SELECT student_id FROM students WHERE user_id = %s) 
-        ORDER BY a.entry_time DESC
-    """, (user_id,))
-    attendance_records = cursor.fetchall()
-
-    conn.close()
-
-    return render_template('student_dashboard.html', user=user, parent=parent, attendance_records=attendance_records)
+    return render_template('student_dashboard.html', user=user, parent=parent)
 
 
 # ------------------ TEACHER DASHBOARD ROUTE ------------------
@@ -126,82 +108,81 @@ def teacher_dashboard():
     if not user_id:
         return redirect('/login')  # Redirect if user is not logged in
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    # Get MongoDB connection
+    db = get_db_connection()
+    pbl_db_collection = db['pbl_db']
 
-    # Fetch teacher details
-    cursor.execute("""
-        SELECT u.full_name, u.profile_picture
-        FROM users u
-        JOIN teachers t ON u.user_id = t.user_id
-        WHERE u.user_id = %s
-    """, (user_id,))
-    teacher = cursor.fetchone()
+    # Fetch users and teachers data
+    users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
+    teachers_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'teachers'})
 
-    if not teacher:
-        return "Teacher not found or not linked properly."
+    # Find the teacher's details
+    teacher_record = next((t for t in teachers_doc['data'] if str(t['user_id']) == user_id), None)
+    user_record = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), None)
 
-    # You can add additional data fetching as needed for the teacher
+    if not teacher_record or not user_record:
+        flash("Teacher not found or not linked properly.")
+        return redirect(url_for('login'))
 
-    conn.close()
+    # Construct the teacher data for the template
+    teacher = {
+        'full_name': user_record.get('full_name'),
+        'profile_picture': user_record.get('profile_picture'),
+    }
+
     return render_template('teacher_dashboard.html', teacher=teacher)
 
 
 # ------------------ PARENT DASHBOARD ROUTE ------------------
+
 @dashboard_bp.route('/parent_dashboard')
 def parent_dashboard():
     user_id = session.get('user_id')
     if not user_id:
         return redirect('/login')
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    # Get MongoDB connection
+    db = get_db_connection()
+    pbl_db_collection = db['pbl_db']
 
-    # Fetch parent details along with parent_id and profile picture
-    cursor.execute("""
-        SELECT u.*, p.parent_id 
-        FROM users u 
-        JOIN parents p ON u.user_id = p.user_id 
-        WHERE u.user_id = %s
-    """, (user_id,))
-    parent = cursor.fetchone()
+    # Fetch users, parents, students, and attendance data
+    users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
+    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
+    students_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'students'})
+    attendance_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'attendance'})
 
-    if not parent:
-        return "Parent not found or not linked properly."
+    # Find the parent record based on user_id
+    parent_record = next((p for p in parents_doc['data'] if str(p['user_id']) == user_id), None)
+    parent_user = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), None)
 
-    # Fetch students linked to this parent with their profile pictures
-    cursor.execute("""
-        SELECT 
-            s.student_id,
-            u.full_name AS student_full_name,
-            u.profile_picture AS student_profile_picture,  -- Fetching student's profile picture
-            p.parent_id,
-            parent_user.full_name AS parent_full_name,
-            parent_user.profile_picture AS parent_profile_picture  -- Fetching parent's profile picture
-        FROM 
-            students s
-        JOIN 
-            users u ON s.user_id = u.user_id
-        JOIN 
-            parents p ON s.parent_id = p.parent_id
-        JOIN 
-            users parent_user ON p.user_id = parent_user.user_id
-        WHERE 
-            p.parent_id = %s
-        ORDER BY 
-            s.student_id;
-    """, (parent['parent_id'],))
-    students = cursor.fetchall()
+    if not parent_record or not parent_user:
+        flash("Parent not found or not linked properly.")
+        return redirect(url_for('login'))
 
-    # For each student, fetch their attendance history and calculate stats
+    # Construct the parent data for the template
+    parent = {
+        'full_name': parent_user.get('full_name'),
+        'profile_picture': parent_user.get('profile_picture'),
+        'parent_id': parent_record.get('parent_id'),
+    }
+
+    # Fetch students linked to this parent
+    students = []
+    for student in students_doc['data']:
+        if student.get('parent_id') == parent['parent_id']:
+            student_user = next((u for u in users_doc['data'] if u['user_id'] == student['user_id']), {})
+            students.append({
+                'student_id': student.get('student_id'),
+                'student_full_name': student_user.get('full_name'),
+                'student_profile_picture': student_user.get('profile_picture')
+            })
+
+    # Fetch attendance records and calculate stats for each student
     for student in students:
-        cursor.execute("""
-            SELECT a.entry_time, a.exit_time, a.face_confirmation 
-            FROM attendance a
-            WHERE a.student_id = %s
-            ORDER BY a.entry_time DESC
-        """, (student['student_id'],))
-        attendance_records = cursor.fetchall()
+        student_id = student['student_id']
+        attendance_records = [
+            record for record in attendance_doc['data'] if record.get('student_id') == student_id
+        ]
 
         student['attendance_records'] = attendance_records
 
@@ -210,7 +191,7 @@ def parent_dashboard():
         total_records = len(attendance_records)
 
         for record in attendance_records:
-            entry_time = record['entry_time']
+            entry_time = record.get('entry_time')
             if entry_time is None:
                 absent += 1
             elif isinstance(entry_time, datetime.datetime):
@@ -233,5 +214,4 @@ def parent_dashboard():
             'absent': absent_percentage
         }
 
-    conn.close()
     return render_template('parent_dashboard.html', parent=parent, students=students)
