@@ -18,37 +18,36 @@ def login():
         # Fetch the user data from the 'users' table document
         users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
         if users_doc and 'data' in users_doc:
-            # Iterate through the users in the 'data' array
-            for user in users_doc['data']:
-                print(f"Checking user: {user['username']}")
+            # Use a filter to search within the embedded data array for the specific username
+            user = next((u for u in users_doc['data'] if u.get('username') == username), None)
+            # Check if the username and password match
+            if user:
+                password_match = verify_password(user['password_hash'], password)
 
-                # Check if the username and password match
-                if user.get('username') == username:
-                    password_match = verify_password(user['password_hash'], password)
-                    if password_match:
-                        session['user_id'] = user.get('user_id')
-                        session['role'] = user.get('role')
+                if password_match:
+                    session['user_id'] = user.get('user_id')
+                    session['role'] = user.get('role')
 
-                        print(f"Login successful for user: {user['username']}, Role: {user['role']}")
+                    print(f"Login successful for user: {user['username']}, Role: {user['role']}")
 
-                        # Redirect based on the user's role
-                        if user['role'] == 'Admin':
-                            return redirect(url_for('dashboard.admin_dashboard'))
-                        elif user['role'] == 'Student':
-                            return redirect(url_for('dashboard.student_dashboard'))
-                        elif user['role'] == 'Teacher':
-                            return redirect(url_for('dashboard.teacher_dashboard'))
-                        elif user['role'] == 'Parent':
-                            return redirect(url_for('dashboard.parent_dashboard'))
-                        else:
-                            flash('Invalid role')
-                            return render_template('login.html', action="Invalid role!")
+                    # Redirect based on the user's role
+                    if user['role'] == 'Admin':
+                        return redirect(url_for('dashboard.admin_dashboard'))
+                    elif user['role'] == 'Student':
+                        return redirect(url_for('dashboard.student_dashboard'))
+                    elif user['role'] == 'Teacher':
+                        return redirect(url_for('dashboard.teacher_dashboard'))
+                    elif user['role'] == 'Parent':
+                        return redirect(url_for('dashboard.parent_dashboard'))
                     else:
-                        flash('Invalid password')
-                        return render_template('login.html', action="Invalid password!")
+                        flash('Invalid role')
+                        return render_template('login.html', action="Invalid role!")
                 else:
-                    flash('Username not found')
-                    return render_template('login.html', action="Invalid username!")
+                    flash('Invalid password')
+                    return render_template('login.html', action="Invalid password!")
+            else:
+                flash('Username not found')
+                return render_template('login.html', action="Invalid username!")
 
         flash('Invalid username or password')
         print("Login failed: Invalid username or password")
