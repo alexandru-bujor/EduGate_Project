@@ -1,0 +1,940 @@
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0px;
+}
+
+nav {
+  background-color: #326C74FF;
+  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  border-radius: 0px;
+  margin-bottom: 20px;
+  margin-top: 4vh;
+}
+
+nav a {
+  margin-right: 10vw;
+  padding: 12px 20px;
+  background-color: #326c74;
+  color: white;
+  text-decoration: none;
+  /*border-radius: 8px;*/
+  transition: background-color 0.3s, color 0.3s;
+}
+
+nav a.active {
+  background-color: #326c74;
+  text-decoration: underline;
+}
+
+nav a:hover {
+  color: #326c74; /* Change this to any color you prefer */
+  background-color: #d4e3e2; /* Optional: change background color on hover */
+}
+
+section {
+  display: none;
+}
+section.active {
+  display: block;
+}
+form,
+table {
+  margin: auto;
+}
+
+input,
+button {
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: 0.3s ease;
+  margin-bottom: 15px;
+  width: 24%; /* Width for input and button */
+}
+
+.submit-button {
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #406a72;
+  color: #ffffff;
+  transition: 0.3s ease;
+  margin-bottom: 15px;
+  width: auto;
+}
+
+.submit-button:hover {
+  background-color: #d4e3e2;
+  color: #406a72;
+}
+
+.submit-button:active {
+  background-color: #d4e3e2;
+  color: #406a72;
+  transform: scale(1.05);
+}
+
+select {
+  height: 40px; /* Same height as inputs */
+  line-height: 28px; /* Aligns text vertically */
+  padding: 0 1rem; /* Horizontal padding */
+  border: 2px solid transparent; /* Border style */
+  border-radius: 8px; /* Rounded corners */
+  outline: none; /* Remove default outline */
+  background-color: #f3f3f4; /* Background color */
+  color: #0d0c22; /* Text color */
+  transition: 0.3s ease; /* Smooth transition for interactions */
+  margin-bottom: 15px; /* Space below the select box */
+  width: 24%; /* Make sure this matches input/button width */
+  appearance: none; /* Remove default styling in some browsers */
+}
+
+
+button {
+  padding-right: 55px;
+  background-color: #0b7077;
+  color: white;
+}
+
+.profile-picture-cell {
+        width: 60px; /* Adjust as needed */
+        height: 60px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+.profile-picture-cell img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures 1:1 aspect ratio without distortion */
+        border-radius: 3px; /* Optional: for rounded corners */
+    }
+
+button:hover {
+  background-color: #58b9c0;
+}
+
+button:active {
+  background-color: #58b9c0;
+  color: #0d0c22;
+}
+
+#classes h3,
+#parents h3,
+#students h3
+ {
+  margin-top: 4vh;
+  margin-left: 3vw;
+}
+
+table {
+  justify-content = center;
+  width: 95%; /* Make the table take full width */
+  margin: 0 auto; /* Add space above and below the table */
+  /*border-radius: 8px; !* Round the corners *!*/
+  overflow: hidden; /* Ensure rounded corners are effective */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+th {
+  background-color: #406a72; /* Light gray background for headers */
+  color: white; /* Dark text color for better readability */
+  text-align: center; /* Align text to the left */
+}
+
+#profile-photo {
+  width: 10%;
+}
+
+.profile-picture-cell {
+  /*width: 60px;*/
+  /*height: 60px;*/
+  text-align: center;
+  vertical-align: middle;
+}
+
+.profile-picture-cell img {
+  width: 60px;
+  height: 60px;
+  /*object-fit: cover; !* Keep image proportions *!*/
+}
+
+td {
+  background-color: #ffffff; /* White background for table cells */
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+}
+
+tr:nth-child(even) td {
+  background-color: #f9f9f9; /* Light background for even rows */
+}
+
+tr:hover td {
+  background-color: #e0e0e0; /* Change background on hover for better interaction */
+}
+
+/*Logout button*/
+button.logout {
+  width: auto;
+  padding: 10px 20px;              /* Adjust button padding */
+  font-size: 16px;                 /* Set font size */
+  display: inline-flex;            /* Use flex to align the text */
+  align-items: center;             /* Vertically center the text */
+  justify-content: center;         /* Horizontally center the text */
+  text-align: center;
+  background-color: #3f6971;       /* Orange background */
+  color: white;                    /* White text */
+  border: none;                    /* Remove default border */
+  border-radius: 5px;              /* Rounded corners */
+  cursor: pointer;                /* Pointer cursor on hover */
+  transition: background-color 0.3s, transform 0.3s;  /* Smooth transition */
+}
+
+a {
+  color: inherit;             /* Inherit color from parent (button text color) */
+  text-decoration: none;      /* Remove the underline */
+}
+
+a:hover {
+  color: inherit;             /* Inherit color from parent (button text color) */
+  text-decoration: none;      /* Remove the underline */
+}
+
+button.logout:hover {
+  color: #3f6971;
+  background-color: #d4e3e2;       /* Darker orange on hover */
+  transform: scale(1.05);           /* Slight scale-up effect */
+}
+
+button.logout:focus {
+  outline: none;                   /* Remove outline on focus */
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.6); /* Focus effect with a glow */
+}
+
+
+
+html {
+  height: 100%;
+  font-size: 16px;
+  /* Base font size for rem units */
+}
+
+:root {
+  --main-color: #d2e6e4;
+  --color2: #0b7077;
+}
+
+#body {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* flex-direction: column; */
+}
+
+#main-section {
+  /* margin: 1rem; */
+  display: flex;
+  flex-direction: column;
+  /* gap: 1.5rem; */
+  align-items: flex-start;
+  padding: 1rem;
+  width: 100%;
+}
+
+#main-section hr {
+  margin: 0;
+  padding: 0;
+  border: 1px solid #3cbbc536;
+  width: 100%;
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.header {
+  display: flex;
+  background-color: var(--main-color);
+  height: 5rem;
+  align-items: center;
+}
+
+.elements1 {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  left: 0;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.name {
+  color: var(--color2);
+  font-family: "Habibi", serif;
+  display: flex;
+  align-items: center;
+}
+
+.name h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+i.bi-book {
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+
+.profile {
+  color: var(--color2);
+  margin-right: 1rem;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.modalClass {
+  display: none;
+  position: fixed;
+  align-content: right;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border: none;
+}
+
+.modalContentProfile {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 1rem;
+  top: 4rem;
+  background-color: white;
+  padding: 2rem;
+  width: 15rem;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 5px rgb(177, 209, 212);
+}
+
+.sections a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color2);
+}
+
+.modalContentProfile :nth-child(2) {
+  margin-top: 1rem;
+}
+
+.modalContentProfile :nth-child(4) {
+  margin-bottom: 1rem;
+}
+
+.sections hr {
+  color: black;
+}
+
+.sections img,
+.sections i {
+  height: 2.5rem;
+  width: 2.5rem;
+  font-size: 1.3rem;
+  border-radius: 20px;
+  background-color: #aaaaaa5d;
+  color: var(--color2);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+.sections img {
+  object-fit: cover;
+}
+
+.sections h2 {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 1rem;
+  text-align: left;
+}
+
+.manage-users {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.manage {
+  margin-top: 20px;
+  margin-left: 20px;
+  font-weight: 100;
+  font-family: Abril FatFace;
+  color: var(--color2);
+
+}
+
+#add-user-form {
+  margin-left: 20px;
+}
+
+#users-table {
+  border-collapse: collapse;
+    /*margin: 25px 0;*/
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin: auto;
+  border-radius: 5px;
+}
+
+#user-search-query {
+  margin-left: 20px;
+}
+
+.sections h2:hover {
+  text-decoration: underline;
+}
+
+.closeModal {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: right;
+  position: absolute;
+  top: 0;
+  right: 15px;
+}
+
+.closeModal:hover,
+.closeModal:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#body {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* flex-direction: column; */
+}
+
+#dashboard {
+  font-size: 2rem;
+  font-weight: 100;
+  font-family: Abril FatFace;
+  color: var(--color2);
+  border: 1px solid black;
+}
+
+.person-data {
+  /* border-bottom: 5px solid #b1d1d4; */
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  /* padding-bottom: 10px; */
+}
+
+.person-data img {
+  border: 1px solid black;
+  width: 8vw;
+  /* Adjust width based on viewport */
+  height: 8vw;
+  /* Height should be the same to maintain circle */
+  max-width: 150vw;
+  /* Maximum size limit */
+  max-height: 150vw;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0;
+  /* Remove margin */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Smooth transition for transform and shadow */
+  cursor: pointer;
+}
+
+#person-name {
+  border: 1px solid black;
+  font-family: Inter;
+  font-weight: 600;
+  font-size: 3rem;
+  margin: 0;
+  /* Remove margin for better alignment */
+  color: black;
+  text-decoration: none;
+  /*text-decoration-color: var(--color2);*/
+}
+
+#name-second-line {
+  margin-top: 0;
+  /*border: 1px solid black;*/
+  font-family: Inter;
+  font-weight: 300;
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
+.child {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+#accordeon-container {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.accordeon {
+  width: 93%;
+  border-radius: 1rem 1rem 0 0;
+  border: 4px solid rgba(177, 212, 208, 0.7);
+  box-shadow: 2px 2px 6px rgba(177, 212, 208, 0.7); /* Horizontal offset, vertical offset, blur radius, and color */
+}
+
+.accordeon .contentBx {
+  position: relative;
+}
+
+.accordeon .contentBx .label {
+  position: relative;
+  padding: 10px;
+  border-radius: 1rem 1rem 0 0;
+  background-color: white;
+  color: black;
+  font-family: Raleway;
+  font-weight: 600;
+  font-size: 1.8em;
+  cursor: pointer;
+}
+
+.accordeon-inner .contentBx-inner .label-inner {
+  position: relative;
+  padding: 10px;
+  border-radius: 1rem 1rem 0 0;
+  background-color: white;
+  color: black;
+  font-family: Raleway;
+  font-weight: 500;
+  font-size: 1.2em;
+  font-weight: 550;
+  cursor: pointer;
+}
+.accordeon-inner .contentBx-inner .label-inner img {
+  width: 4vw;
+  /* Adjust width based on viewport */
+  height: 4vw;
+  /* Height should be the same to maintain circle */
+  max-width: 120vw;
+  /* Maximum size limit */
+  max-height: 120vw;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0;
+  /* Remove margin */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Smooth transition for transform and shadow */
+  cursor: pointer;
+}
+
+.accordeon .contentBx .label::before {
+  content: "+";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+}
+
+.accordeon-inner .contentBx-inner .label-inner::before {
+  content: "+";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+}
+
+.accordeon .contentBx.active .label::before {
+  content: "-";
+}
+
+.accordeon-inner .contentBx-inner.active .label-inner::before {
+  content: "-";
+}
+
+.accordeon .contentBx .content {
+  position: relative;
+  background: #fff;
+  height: 0;
+  overflow: hidden;
+  transition: 0.5s;
+  border: none;
+  border-top: 1px solid #b1d1d4;
+  border-bottom: 1px solid #b1d1d4;
+  overflow-y: auto;
+}
+
+.accordeon-inner .contentBx-inner .content-inner {
+  position: relative;
+  background: #fff;
+  height: 0;
+  overflow: hidden;
+  transition: 0.5s;
+  /* Smooth transition for height */
+  border: 1px solid #b1d1d4;
+  overflow-y: auto;
+}
+
+.accordeon-inner .contentBx-inner.active .content-inner {
+  height: auto;
+  border: none;
+  border-top: 1px solid #b1d1d4;
+  border-bottom: 1px solid #b1d1d4;
+  /* border: 1px solid black; */
+  /* Will be set dynamically via JavaScript */
+}
+
+.accordeon .contentBx.active .content {
+  height: 800px;
+  padding: 1vw 3vw 0vw 3vw;
+}
+
+.accordeon-inner .contentBx-inner {
+  position: relative;
+}
+
+.accordeon-inner .contentBx-inner.active .content-inner {
+  height: 600px;
+  padding: 10px;
+}
+
+.child-chart {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+#chart-container {
+  display: flex;
+  width: 1rem;
+  height: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+canvas {
+  width: 15vw;
+  /* height: 10rem; */
+}
+
+/*#tables {*/
+/*  display: flex;*/
+/*  flex-direction: row;*/
+/*  width: 100%;*/
+/*  justify-content: space-evenly;*/
+/*  margin-top: 0;*/
+/*}*/
+
+.row {
+  display: flex;
+  width: 100%;
+  padding: 0px 0px 0px 20px;
+}
+
+#student-data {
+  font-family: Raleway;
+  font-weight: 700;
+  font-size: 24;
+}
+
+#student-search-query {
+  margin-left:3vw;
+}
+
+#students button {
+  margin: 0;
+  width: 10vw;
+  padding: 5px;
+  text-align: center;
+}
+
+
+.column {
+  flex: 1;
+  /* font-family: "Habibi", serif; */
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: white;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+}
+
+/*The small profile*/
+.modalClass {
+    display: none;
+    position: fixed;
+    align-content: right;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border: none;
+}
+
+.modalContentProfile {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 1rem;
+    top: 4rem;
+    background-color: white;
+    padding: 2rem;
+    width: 15rem;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px 5px rgb(177, 209, 212);
+}
+
+.modalContentProfile :nth-child(2) {
+    margin-top: 1rem;
+}
+
+.modalContentProfile :nth-child(4) {
+    margin-bottom: 1rem;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.time {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#person-name,
+#name-second-line,
+.person-data img,
+#dashboard,
+#main-section {
+  border: none;
+}
+
+/* Footer */
+
+.footer {
+    position: absolute;
+    background-color: var(--main-color);
+    height: 15rem;
+    width: 100%;
+    margin-top: 5rem;
+    border-top-left-radius: 60% 30%;
+    border-top-right-radius: 60% 30%;
+}
+
+.footer-content {
+    margin-top: 3rem;
+    margin-left: 1rem;
+}
+
+.info {
+    display: flex;
+    flex-direction: row;
+}
+
+.generalInfo {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin-top: 5px;
+}
+
+.listInfo {
+    display: flex;
+    flex-direction: row;
+}
+
+.listInfo i {
+    font-size: 1rem;
+    color: var(--color2);
+    margin-right: 15px;
+}
+
+.listInfo h1 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color2);
+}
+
+.otherInfo {
+    list-style: none;
+    color: var(--color2);
+    font-size: 1rem;
+    font-weight: 400;
+    margin-left: 50px;
+}
+
+.otherInfo li:first-child {
+    font-weight: 700;
+    color: black;
+    margin-bottom: 15px;
+}
+
+.otherInfo li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+
+@media (max-width: 768px) {
+    .name h1 {
+        font-size: 1.25rem;
+    }
+
+    .logIn h1, .singUp h1 {
+        font-size: 0.875rem;
+    }
+
+    .text2 h1 {
+        font-size: 5vw;
+    }
+
+    .text2 img {
+        height: 200px;
+    }
+
+    .decoration1 {
+        top: 30%;
+        left: 5%;
+    }
+
+    .decoration2 {
+        top: 35%;
+    }
+
+    .decoration3 {
+        top: 40%;
+        right: 5%;
+    }
+
+    .listInfo i {
+        font-size: 0.7rem;
+    }
+
+    .listInfo h1 {
+        font-size: 0.7rem;
+    }
+
+    .otherInfo {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        padding: 1.5rem;
+    }
+
+    .name h1 {
+        font-size: 1rem;
+    }
+
+    .text1 h1 {
+        font-size: 0.875rem;
+    }
+
+    .text2 img {
+        height: 150px;
+    }
+
+    .decoration1 {
+        top: 25%;
+        left: 5%;
+    }
+
+    .decoration2 {
+        top: 30%;
+    }
+
+    .decoration3 {
+        top: 35%;
+        left: 20%;
+    }
+
+    .listInfo i {
+        font-size: 0.5rem;
+    }
+
+    .listInfo h1 {
+        font-size: 0.5rem;
+    }
+
+    .otherInfo {
+        font-size: 0.5rem;
+    }
+}
