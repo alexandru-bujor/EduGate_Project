@@ -1,40 +1,36 @@
+import time
 import cv2
 import face_recognition
-import mysql.connector
-import time
+from utils.db import get_db_connection
 
-# Database connection function
-def get_db_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="school_access"
-    )
-
-# Load known faces and student IDs from the database
+# Load known faces and student IDs
 def load_known_faces():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    db = get_db_connection()
+    users_collection = db['pbl_db']
 
-    cursor.execute(
-        "SELECT student_id, profile_picture FROM students s JOIN users u ON s.user_id = u.user_id WHERE profile_picture IS NOT NULL")
+    # Fetch students with profile pictures
+    students_doc = users_collection.find_one({'type': 'table', 'name': 'students'})
+    users_doc = users_collection.find_one({'type': 'table', 'name': 'users'})
+
     known_faces = []
     student_ids = []
 
-    for row in cursor.fetchall():
-        image_path = f"static/profile_pictures/{row['profile_picture']}"
-        image = face_recognition.load_image_file(image_path)
+    if students_doc and users_doc:
+        for student in students_doc['data']:
+            user = next((u for u in users_doc['data'] if u['user_id'] == student['user_id']), None)
+            if user and user.get('profile_picture'):
+                image_path = f"static/profile_pictures/{user['profile_picture']}"
+                try:
+                    image = face_recognition.load_image_file(image_path)
+                    encodings = face_recognition.face_encodings(image)
+                    if encodings:
+                        known_faces.append(encodings[0])
+                        student_ids.append(student['student_id'])
+                except Exception as e:
+                    print(f"Error loading image {image_path}: {e}")
 
-        # Get the face encoding from the image
-        encodings = face_recognition.face_encodings(image)
-        if len(encodings) > 0:
-            known_faces.append(encodings[0])  # Use the first face found
-            student_ids.append(row['student_id'])
-
-    cursor.close()
-    conn.close()
     return known_faces, student_ids
+
 
 # Initialize known faces and student IDs
 known_face_encodings, known_student_ids = load_known_faces()
@@ -44,7 +40,6 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 
 # Initialize camera
 video_capture = cv2.VideoCapture(0)
-
 
 # Set the resolution to lower to increase FPS
 video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
@@ -97,37 +92,23 @@ while True:
                     print(f"Recognized student ID: {student_id}")
 
                     # Check the latest attendance record for this student
-                    try:
-                        conn = get_db_connection()
-                        cursor = conn.cursor(dictionary=True)
+                    db = get_db_connection()
+                    attendance_collection = db['attendance_records']
 
-                        # Retrieve the most recent attendance record for this student where face_confirmation is False
-                        cursor.execute("""
-                            SELECT * FROM attendance 
-                            WHERE student_id = %s AND face_confirmation = FALSE 
-                            ORDER BY entry_time DESC 
-                            LIMIT 1
-                        """, (student_id,))
-
-                        record = cursor.fetchone()
-
-                        if record:
-                            # Update the face_confirmation to TRUE
-                            cursor.execute("""
-                                UPDATE attendance 
-                                SET face_confirmation = TRUE 
-                                WHERE attendance_id = %s
-                            """, (record['attendance_id'],))
-
-                            conn.commit()
-                            print(f"Updated face_confirmation for student ID: {student_id}")
-
-                    except mysql.connector.Error as err:
-                        print(f"Database error: {err}")
-                    finally:
-                        if conn.is_connected():
-                            cursor.close()
-                            conn.close()
+                    # TODO when the "attach card UID to student" and nfc.py will be implemented make so it would update the base 0 value on face_recognition_status"
+                    # # Retrieve the most recent attendance record for this student where face_confirmed is False
+                    # record = attendance_collection.find_one(
+                    #     {"student_id": student_id, "face_confirmed": 0, "status": "active"},
+                    #     sort=[("entry_time", -1)]
+                    # )
+                    #
+                    # if record:
+                    #     # Update the face_confirmed to 1
+                    #     attendance_collection.update_one(
+                    #         {"_id": record["_id"]},
+                    #         {"$set": {"face_confirmed": 1}}
+                    #     )
+                    #     print(f"Updated face confirmation for student ID: {student_id}")
 
             # Draw a rectangle around the face
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)

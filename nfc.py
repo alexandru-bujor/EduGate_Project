@@ -8,6 +8,8 @@ from smartcard.util import toHexString
 db = pymysql.connect(host='localhost', user='root', password='', database='school_access')
 cursor = db.cursor()
 
+# TODO change to new DB, create attendance records based on student_id.
+#  Must include uid, student_id, entry_time, exit_time=NULL by default, face_recognition_status=0 by default.
 # Main NFC tracking function
 def track_nfc():
     last_uid = None  # Track the last detected UID

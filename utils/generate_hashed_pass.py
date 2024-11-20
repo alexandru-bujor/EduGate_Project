@@ -25,6 +25,7 @@ print(verify_password(hashed_password, original_password))
 # nataliapavlovskaia volvoxc60
 # viorelbostan utmbomba
 # dimaciorba fcim123
-# aliosastudent student777
-# mihailjackovici ford123
 # victoriasecret toyotachr
+# alexis77 aliosastudent
+# danacojocari daniela
+# janetagrigoras janeta

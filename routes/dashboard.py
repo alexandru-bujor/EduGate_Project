@@ -124,6 +124,35 @@ def teacher_dashboard():
     users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
     teachers_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'teachers'})
 
+    # Fetch parents
+    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
+    parents = []
+    if parents_doc:
+        for parent in parents_doc['data']:
+            user = next((u for u in users_doc['data'] if u['user_id'] == parent['user_id']), {})
+            parents.append({**user, 'parent_id': parent.get('parent_id')})
+
+
+    # Fetch classes
+    classes_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'classes'})
+    # Dictionary to map teacher_id to full_name
+    teacher_name_mapping = {}
+    for teacher in teachers_doc['data']:
+        user = next((u for u in users_doc['data'] if u['user_id'] == teacher['user_id']), None)
+        if user:
+            teacher_name_mapping[teacher['teacher_id']] = user['full_name']
+
+    # Classes list with teacher names
+    classes = []
+    if classes_doc:
+        for class_item in classes_doc['data']:
+            teacher_name = teacher_name_mapping.get(class_item.get('teacher_id'), "No Teacher Assigned")
+            classes.append({
+                'class_id': class_item.get('class_id'),
+                'class_name': class_item.get('class_name'),
+                'description': class_item.get('description'),
+                'teacher_name': teacher_name
+            })
     # Find the teacher's details
     teacher_record = next((t for t in teachers_doc['data'] if str(t['user_id']) == user_id), None)
     user_record = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), None)
@@ -138,7 +167,10 @@ def teacher_dashboard():
         'profile_picture': user_record.get('profile_picture'),
     }
 
-    return render_template('teacher_dashboard.html', teacher=teacher)
+    return render_template('teacher_dashboard.html',
+                           teacher=teacher,
+                           parents=parents,
+                           classes=classes)
 
 
 # ------------------ PARENT DASHBOARD ROUTE ------------------

@@ -28,8 +28,6 @@ def login():
                     session['user_id'] = user.get('user_id')
                     session['role'] = user.get('role')
 
-                    print(f"Login successful for user: {user['username']}, Role: {user['role']}")
-
                     # Redirect based on the user's role
                     if user['role'] == 'Admin':
                         return redirect(url_for('dashboard.admin_dashboard'))
