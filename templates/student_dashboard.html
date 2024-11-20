@@ -49,7 +49,7 @@
                 <div class="sections">
                     <a href="#">
                         <img src="/static/profile_pictures/{{ user.profile_picture }}" alt="Profile Picture" width="60" height="60">
-                        <h2>Welcome, {{ user.student_name }}</h2>
+                        <h2>Welcome, {{ user.full_name }}</h2>
                     </a>
                 </div>
                 <hr style="border: 1px solid #00000046; width: 100%; ">
@@ -76,7 +76,7 @@
         <hr>
         <div class="person-data">
             <img src="/static/profile_pictures/{{ user.profile_picture }}" alt="Profile Picture" width="60" height="60">
-            <p><span id="person-name">{{ user.student_name }}</span> <br> <span id="name-second-line">Student</span>
+            <p><span id="person-name">{{ user.full_name }}</span> <br> <span id="name-second-line">Student</span>
             </p>
         </div>
 

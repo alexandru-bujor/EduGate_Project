@@ -39,8 +39,8 @@
                 <span class="closeModal" onclick="closeModalProfile()">×</span>
                 <div class="sections">
                     <a href="#">
-                         <img src="{{ url_for('static', filename='profile_pictures/parent.profile_picture') }}" alt="Parent Profile Picture">
-                        <h2>{{ parent.full_name }}</h2> <!-- Dynamic Parent Name -->
+                         <img src="/static/profile_pictures/{{ parent.profile_picture }}" alt="Parent Profile Picture">
+                        <h2>Welcome, {{ parent.full_name }}</h2> <!-- Dynamic Parent Name -->
                     </a>
                 </div>
                 <hr style="border: 1px solid #00000046; width: 100%; ">

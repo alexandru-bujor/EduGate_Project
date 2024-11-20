@@ -188,11 +188,11 @@ i.bi-book {
 }
 
 #main-section {
-    /* margin: 1rem; */
+    /*margin: 0rem 1rem;*/
     display: flex;
     flex-direction: column;
     /* gap: 1.5rem; */
-    align-items: flex-start;
+    align-items: center;
     padding: 1rem;
     width: 100%;
 }
@@ -212,12 +212,13 @@ i.bi-book {
     font-weight:100;
     font-family: Abril FatFace;
     color: var(--color2);
+    width:100%;
     /* border: 1px solid black; */
 }
 
 .person-data{
     display:flex;
-    width: 100%;
+    width: 97%;
     flex-direction: row;
     align-items: center;
     gap: 1rem;
@@ -264,19 +265,19 @@ i.bi-book {
 
 .child .person-data{
     font-family: Raleway;
-    font-weight: 700;
-    font-size:24;
+    font-weight: 600;
+    font-size:19;
 }
 
 #accordeon-container{
-    margin-top: 1rem;
-    width: 100%;
+    margin-top: 2rem;
+    width: 84%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-bottom: 2rem;
-    
+
 
 }
 
@@ -337,6 +338,11 @@ i.bi-book {
     padding: 1vw 3vw 3vw 3vw;
 }
 
+p {
+    margin-top: 2;
+    margin-bottom: 1rem;
+}
+
 #tables{
     display: flex;
     flex-direction: row;
@@ -355,7 +361,7 @@ i.bi-book {
     flex-direction: column;
     width:40%;
     /* height: 60vh; */
-    margin-top: 3vw;
+    margin-top: 2vw;
 }
 
 .child-stats .title{
