@@ -147,17 +147,17 @@
 
     <!-- Classes Section -->
     <section id="classes">
-        <h2>Manage Classes</h2>
+        <h2 class="manage">Manage Classes</h2>
 
-        <h3>Add New Class</h3>
-        <form id="add-class-form" action="{{ url_for('class_management.add_class') }}" method="POST">
+        <h3 class="manage-users">Add New Class</h3>
+        <form class="add-class-form" action="{{ url_for('class_management.add_class') }}" method="POST">
             <input type="text" name="class_name" placeholder="Class Name" required>
             <input name="description" placeholder="Description">
-            <button type="submit">Create Class</button>
+            <button class="submit-button" type="submit">Create Class</button>
         </form>
 
-        <h3>Link Teacher to Class</h3>
-        <form action="{{ url_for('links.link_teacher_to_class') }}" method="POST">
+        <h3 class="manage-users">Link Teacher to Class</h3>
+        <form class="add-class-form" action="{{ url_for('links.link_teacher_to_class') }}" method="POST">
             <label for="class_id">Select Class:</label>
             <select name="class_id" id="class_id" required>
                 {% for class in classes %}
@@ -172,12 +172,12 @@
                 {% endfor %}
             </select>
 
-            <button type="submit">Link Teacher to Class</button>
+            <button class="submit-button" type="submit">Link Teacher to Class</button>
         </form>
 
         <!-- Classes List -->
-        <h3>Classes List</h3>
-        <table>
+        <h3 class="manage-users">Classes List</h3>
+        <table id="teachers-table">
             <thead>
                 <tr>
                     <th>Class ID</th>
@@ -202,7 +202,7 @@
                     </td>
                     <td>
                         <form action="{{ url_for('class_management.delete_class', class_id=class.class_id) }}" method="POST">
-                            <button type="submit">Delete</button>
+                            <button class="submit-button" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>
