@@ -36,6 +36,13 @@ html {
     align-items: center;
 }
 
+.name a{
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color:var(--color2);;
+}
+
 .name h1 {
     font-size: 1.5rem;
     margin: 0;
@@ -222,7 +229,7 @@ i.bi-book {
     flex-direction: row;
     align-items: center;
     gap: 1rem;
-    
+    padding-left:0.6rem;
 }
 
 .person-data img {
@@ -234,9 +241,11 @@ i.bi-book {
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 0; /* Remove margin */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for transform and shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     }
+
+
 #person-name {
     /* border: 1px solid black; */
     font-family: Inter;
@@ -264,17 +273,19 @@ i.bi-book {
 }
 
 .child .person-data{
+    padding-top:1vh;
+    width:100%;
     font-family: Raleway;
-    font-weight: 600;
+    font-weight: 500;
     font-size:19;
 }
 
 #accordeon-container{
     margin-top: 2rem;
-    width: 84%;
+    width: 95%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /*align-items: center;*/
     justify-content: center;
     margin-bottom: 2rem;
 
@@ -282,10 +293,10 @@ i.bi-book {
 }
 
     .accordeon{
-    width: 93%;
-    border-radius: 1rem 1rem 0 0;
-    border: 4px solid rgba(177, 212, 208, 0.7);
-    box-shadow: 2px 2px 6px rgba(177, 212, 208, 0.7); /* Horizontal offset, vertical offset, blur radius, and color */
+    width: 100%;
+    /*border-radius: 1rem 1rem 0 0;*/
+    border: 2px solid rgba(177, 212, 208, 0.7);
+    box-shadow: 2px 2px 6px rgba(177, 212, 208, 0.7);
 
 } 
 
@@ -333,20 +344,39 @@ i.bi-book {
     overflow-y: auto;  
 }
 
+.accordeon .contentBx .label img  {
+    width: 70px;  /* Adjust width based on viewport */
+    height: 70px; /* Height should be the same to maintain circle */
+    border-radius: 10%;
+    object-fit: cover;
+    margin-bottom: 0; /* Remove margin */
+    /*transition: transform 0.3s ease, box-shadow 0.3s ease; !* Smooth transition for transform and shadow *!*/
+    cursor: pointer;
+    }
+
+
+
 .accordeon .contentBx.active .content{
     height: 600px;
-    padding: 1vw 3vw 3vw 3vw;
+    /*padding: 1vw 3vw 3vw 3vw;*/
 }
 
 p {
     margin-top: 2;
     margin-bottom: 1rem;
+    font-family: "Inter";
+
+}
+
+.content-info-person-details{
+    font-weight: 300;
 }
 
 #tables{
     display: flex;
     flex-direction: row;
     width: 100%;
+    padding: 0vw 3vw 3vw 3vw;
     justify-content: space-evenly;
     margin-top: 0;
 }

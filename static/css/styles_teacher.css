@@ -107,6 +107,13 @@ button {
   color: white;
 }
 
+.name a{
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color:var(--color2);;
+}
+
 .profile-picture-cell {
         width: 60px; /* Adjust as needed */
         height: 60px;
@@ -139,7 +146,7 @@ button:active {
 }
 
 table {
-  justify-content = center;
+  justify-content: center;
   width: 95%; /* Make the table take full width */
   margin: 0 auto; /* Add space above and below the table */
   /*border-radius: 8px; !* Round the corners *!*/

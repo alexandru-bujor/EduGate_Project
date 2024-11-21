@@ -26,8 +26,10 @@
     <div class="header">
         <div class="elements1">
             <div class="name d-flex align-items-center">
-                <i class="bi bi-book"></i>
-                <h1>EduGate</h1>
+                <a href="{{ url_for('index.index') }}">
+                    <i class="bi bi-book"></i>
+                    <h1>EduGate</h1>
+                </a>
             </div>
         </div>
         <div class="profile" onclick="openModalProfile(event)">
@@ -73,16 +75,14 @@
             <div class="accordeon">
                 {% for student in students %}
                 <div class="contentBx">
-                    <div class="label"> {{ student.student_full_name }}</div>
+                    <div class="label"> <img src="/static/profile_pictures/{{ student.student_profile_picture }}" alt="Student Profile Picture" width="80" height="80"> {{ student.student_full_name }}</div>
                     <div class="content">
                         <div class="child">
                             <div class="person-data">
-                                <img src="/static/profile_pictures/{{ student.student_profile_picture }}" alt="Student Profile Picture" width="80" height="80">
-
-                                <p><span id="child-name">Full name: {{ student.student_full_name }}</span> <br>
-                                <span id="student-id">Student ID: {{ student.student_id }}</span><br>
-                                <span id="grade">Grade: {{ student.grade }}</span><br>
-                                <span id="grad-date">Expected graduation date: {{ student.graduation_date }}</span></p>
+                                <p><span id="child-name">Full name: <span class="content-info-person-details">{{ student.student_full_name }}</span></span> <br>
+                                <span id="student-id">Student ID:  <span class="content-info-person-details">{{ student.student_id }}</span></span><br>
+                                <span id="grade">Grade:  <span class="content-info-person-details">{{ student.grade }}</span></span><br>
+                                <span id="grad-date">Expected graduation date:  <span class="content-info-person-details">{{ student.graduation_date }}</span></span></p>
                             </div>
                             <div id="tables">
                                 <div class="child-stats" id="first">
