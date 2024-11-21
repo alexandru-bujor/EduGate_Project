@@ -35,8 +35,10 @@
     <div class="header">
         <div class="elements1">
             <div class="name d-flex align-items-center">
-                <i class="bi bi-book"></i>
-                <h1>EduGate</h1>
+                <a href="{{ url_for('index.index') }}">
+                    <i class="bi bi-book"></i>
+                    <h1>EduGate</h1>
+                </a>
             </div>
         </div>
         <div class="profile" onclick="openModalProfile(event)">

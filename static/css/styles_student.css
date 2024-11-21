@@ -18,21 +18,29 @@ html {
 .elements1 {
     position: relative;
     z-index: 1;
-    display: flex;
+    /*display: flex;*/
     justify-content: space-between;
     align-items: center;
     left: 0;
-    flex-wrap: nowrap;
+    /*flex-wrap: nowrap;*/
     width: 100%;
     gap: 0.5rem;
     margin-left: 0.5rem;
 }
+
 
 .name {
     color: var(--color2);
     font-family: "Habibi", serif;
     display: flex;
     align-items: center;
+}
+
+.name a{
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color:var(--color2);;
 }
 
 .name h1 {
