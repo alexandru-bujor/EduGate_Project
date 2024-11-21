@@ -412,6 +412,51 @@ i.bi-book {
   border-radius: 5px;
 }
 
+#teachers-table {
+  border-collapse: collapse;
+    /*margin: 25px 0;*/
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin: auto;
+  border-radius: 5px;
+}
+
+#parents-table {
+  border-collapse: collapse;
+    /*margin: 25px 0;*/
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin: auto;
+  border-radius: 5px;
+}
+
+#students-table {
+  border-collapse: collapse;
+    /*margin: 25px 0;*/
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  margin: auto;
+  border-radius: 5px;
+}
+
+#link-student-class-form {
+  margin-left: 20px;
+}
+
+#link-student-parent-form {
+  margin-left: 20px;
+}
+
+#student-search-query {
+  margin-left: 20px;
+}
+
 #user-search-query {
   margin-left: 20px;
 }
