@@ -273,39 +273,162 @@ function searchParent(parentName) {
 // ------------------ STUDENT MANAGEMENT ------------------
 function searchStudents() {
     const query = document.getElementById("student-search-query").value;
+    console.log("Searching with query:", query);
+
     fetch(`/search/search_students?query=${encodeURIComponent(query)}`)
         .then(response => response.json())
-        .then(students => renderStudentTable(students))
+        .then(students => {
+            console.log("Received student data:", students);
+            renderStudentTable(students);
+        })
         .catch(error => console.error("Error fetching students:", error));
 }
 
 function renderStudentTable(students) {
-    const studentsTableBody = document.getElementById("students-table").getElementsByTagName("tbody")[0];
-    studentsTableBody.innerHTML = "";
+    const studentsTableBody = document.getElementById("students-table")?.getElementsByTagName("tbody")[0];
+    if (!studentsTableBody) {
+        console.error("Could not find students table body");
+        return;
+    }
+
+    // Clear existing content safely
+    while (studentsTableBody.firstChild) {
+        studentsTableBody.removeChild(studentsTableBody.firstChild);
+    }
+
     students.forEach(student => {
-        const profilePictureUrl = student.profile_picture
-            ? `/static/profile_pictures/${student.profile_picture}`
-            : "/static/profile_pictures/default.jpg";
         const row = document.createElement("tr");
-        row.innerHTML = `
-            <td><img src="${profilePictureUrl}" width="60" height="60"></td>
-            <td>${student.username}</td>
-            <td>${student.student_name}</td>
-            <td>${student.class_name || "No Class Assigned"}</td>
-            <td>${student.email}</td>
-            <td>${student.parent_name ? `<a href="#" onclick="searchParent('${student.parent_name}')">${student.parent_name}</a>` : "No Parent Assigned"}</td>
-        `;
+
+        // Profile picture cell
+        const imgCell = document.createElement("td");
+        const img = document.createElement("img");
+        img.src = student.profile_picture
+            ? `/static/profile_pictures/${encodeURIComponent(student.profile_picture)}`
+            : "/static/profile_pictures/default.jpg";
+        img.width = 60;
+        img.height = 60;
+        img.alt = "Profile picture";
+        imgCell.appendChild(img);
+
+        // Text content cells
+        const usernameCell = document.createElement("td");
+        usernameCell.textContent = student.username;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = student.student_name;
+
+        const classCell = document.createElement("td");
+        classCell.textContent = student.class_name || "No Class Assigned";
+
+        const emailCell = document.createElement("td");
+        emailCell.textContent = student.email;
+
+        // Parent cell with link
+        const parentCell = document.createElement("td");
+        if (student.parent_name) {
+            const parentLink = document.createElement("a");
+            parentLink.href = "#";
+            parentLink.textContent = student.parent_name;
+            parentLink.addEventListener("click", (e) => {
+                e.preventDefault();
+                searchParent(student.parent_name);
+            });
+            parentCell.appendChild(parentLink);
+        } else {
+            parentCell.textContent = "No Parent Assigned";
+        }
+
+        const uidCell = document.createElement("td");
+        const uidInput = document.createElement("input");
+        uidInput.type = "text";
+        uidInput.value = student.uid || "";
+        uidInput.id = `uid-${student.student_id}`;
+        uidInput.className = "uid-input";
+
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "Update UID";
+        updateButton.className = "update-uid-btn";
+        updateButton.addEventListener("click", () => updateUid(student.student_id));
+
+        uidCell.appendChild(uidInput);
+        uidCell.appendChild(updateButton);
+
+        row.append(
+            imgCell,
+            usernameCell,
+            nameCell,
+            classCell,
+            emailCell,
+            parentCell,
+            uidCell
+        );
+
         studentsTableBody.appendChild(row);
     });
 }
 
+function updateUid(studentId) {
+    const uidInput = document.getElementById(`uid-${studentId}`);
+    if (!uidInput) {
+        console.error(`Could not find UID input for student ${studentId}`);
+        return;
+    }
 
+    const newUid = uidInput.value.trim();
+
+    // Basic
+    if (!newUid) {
+        alert('Please enter a valid UID');
+        return;
+    }
+
+    uidInput.disabled = true;
+    const updateButton = uidInput.nextElementSibling;
+    if (updateButton) {
+        updateButton.disabled = true;
+    }
+
+    fetch('/update_student_uid', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            student_id: studentId,
+            uid: newUid
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('UID updated successfully!');
+            searchStudents();
+        } else {
+            throw new Error(data.error || 'Failed to update UID');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating UID:', error);
+        alert(`Error: ${error.message}`);
+    })
+    .finally(() => {
+        uidInput.disabled = false;
+        if (updateButton) {
+            updateButton.disabled = false;
+        }
+    });
+}
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM Content Loaded");
     loadFooter();
     searchUsers();
     searchClasses();
     searchTeachers();
     searchParents();
-    searchStudents();
     showAlertForAction();
 });

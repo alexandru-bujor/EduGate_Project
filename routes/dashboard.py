@@ -52,18 +52,16 @@ def admin_dashboard():
                 'student_name': user.get('full_name'),
                 'class_name': student_class.get('class_name'),
                 'parent_name': parent_user.get('full_name'),
+                'uid': student.get('uid', 'No UID Assigned'),  # Default to "No UID Assigned"
                 'profile_picture': user.get('profile_picture')
             })
 
-    # Fetch classes
-    # Dictionary to map teacher_id to full_name
     teacher_name_mapping = {}
     for teacher in teachers_doc['data']:
         user = next((u for u in users_doc['data'] if u['user_id'] == teacher['user_id']), None)
         if user:
             teacher_name_mapping[teacher['teacher_id']] = user['full_name']
 
-    # Classes list with teacher names
     classes = []
     if classes_doc:
         for class_item in classes_doc['data']:

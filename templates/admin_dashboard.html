@@ -345,41 +345,45 @@
         <input type="text" id="student-search-query" placeholder="Search by name, username">
         <button class="submit-button" onclick="searchStudents()">Search</button>
 
-        <h3 class="manage-users">Students List</h3>
-        <table id="students-table">
-            <thead>
-                <tr>
-                    <th>Profile Picture</th>
-                    <th>Username</th>
-                    <th>Full Name</th>
-                    <th>Class</th>
-                    <th>Email</th>
-                    <th>Parent</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td class="profile-picture-cell">
-                        <img src="{{ url_for('static', filename='profile_pictures/' + (student.profile_picture or 'default.jpg')) }}"
-                             alt="Profile Picture">
-                    </td>
-                    <td>{{ student.student_name }}</td>
-                    <td>{{ student.class_name if student.class_name else 'No Class Assigned' }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>
-                        {% if student.parent_name %}
-                            <a href="#" onclick="searchParent('{{ student.parent_name }}')">
-                                ({{ student.parent_id }}) {{ student.parent_name }}
-                            </a>
-                        {% else %}
-                            No Parent Assigned
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+     <h3 class="manage-users">Students List</h3>
+    <table id="students-table">
+        <thead>
+            <tr>
+                <th>Profile Picture</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Class</th>
+                <th>Email</th>
+                <th>Parent</th>
+                <th>UID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td class="profile-picture-cell">
+                    <img src="{{ url_for('static', filename='profile_pictures/' + (student.profile_picture or 'default.jpg')) }}"
+                         alt="Profile Picture">
+                </td>
+                <td>{{ student.student_name }}</td>
+                <td>{{ student.full_name }}</td>
+                <td>{{ student.class_name if student.class_name else 'No Class Assigned' }}</td>
+                <td>{{ student.email }}</td>
+                <td>
+                    {% if student.parent_name %}
+                        <a href="#" onclick="searchParent('{{ student.parent_name }}')">
+                            {{ student.parent_name }}
+                        </a>
+                    {% else %}
+                        No Parent Assigned
+                    {% endif %}
+                </td>
+                <td>{{ student.uid }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     </section>
 
     <div class="footer">

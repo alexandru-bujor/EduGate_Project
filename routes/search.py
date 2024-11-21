@@ -6,14 +6,13 @@ search = Blueprint('search', __name__)
 # ------------------ SEARCH USERS ROUTE ------------------
 @search.route('/search_users')
 def search_users():
-    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    query = request.args.get('query', '').strip()
     db = get_db_connection()
     users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
 
     if not users_doc:
         return jsonify([])
 
-    # Use MongoDB regex for partial matching with case-insensitivity
     regex_query = {'$regex': query, '$options': 'i'}
     users = []
 
@@ -22,7 +21,6 @@ def search_users():
         email = user.get('email', '')
         username = user.get('username', '')
 
-        # Case-insensitive search using $regex with 'i' option
         if (regex_query['$regex'].lower() in full_name.lower() or
             regex_query['$regex'].lower() in email.lower() or
             regex_query['$regex'].lower() in username.lower()):
@@ -44,7 +42,7 @@ def search_users():
 # ------------------ SEARCH STUDENTS ROUTE ------------------
 @search.route('/search_students')
 def search_students():
-    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    query = request.args.get('query', '').strip()
     db = get_db_connection()
     users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
     students_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'students'})
@@ -63,12 +61,11 @@ def search_students():
         parent = next((p for p in parents_doc['data'] if p['parent_id'] == student.get('parent_id')), {})
         parent_user = next((u for u in users_doc['data'] if u['user_id'] == parent.get('user_id')), {})
 
-        # Extract fields and strip whitespace
+
         full_name = user.get('full_name', '').strip()
         username = user.get('username', '').strip()
         email = user.get('email', '').strip()
 
-        # Perform case-insensitive search
         if (query_lower in full_name.lower() or
             query_lower in username.lower() or
             query_lower in email.lower()):
@@ -79,16 +76,16 @@ def search_students():
                 'email': email,
                 'profile_picture': user.get('profile_picture'),
                 'class_name': class_info.get('class_name'),
-                'parent_name': parent_user.get('full_name')
+                'parent_name': parent_user.get('full_name'),
+                'uid': student.get('uid')
             })
 
     return jsonify(students)
 
-
 # ------------------ SEARCH PARENTS ROUTE ------------------
 @search.route('/search_parents')
 def search_parents():
-    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    query = request.args.get('query', '').strip()
     db = get_db_connection()
     users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
     parents_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'parents'})
@@ -102,11 +99,9 @@ def search_parents():
     for parent in parents_doc['data']:
         user = next((u for u in users_doc['data'] if u['user_id'] == parent['user_id']), {})
 
-        # Extract fields and strip whitespace
         full_name = user.get('full_name', '').strip()
         email = user.get('email', '').strip()
 
-        # Perform case-insensitive search
         if (query_lower in full_name.lower() or
             query_lower in email.lower()):
             parents.append({
@@ -144,7 +139,7 @@ def search_classes():
 # ------------------ SEARCH TEACHERS ROUTE ------------------
 @search.route('/search_teachers')
 def search_teachers():
-    query = request.args.get('query', '').strip()  # Remove leading/trailing whitespace
+    query = request.args.get('query', '').strip()
     db = get_db_connection()
     users_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'users'})
     teachers_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'teachers'})
