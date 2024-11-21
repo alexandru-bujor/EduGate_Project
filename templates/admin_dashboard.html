@@ -214,15 +214,15 @@
 
     <!-- Teachers Section -->
     <section id="teachers">
-        <h2>Manage Teachers</h2>
+        <h2 class="manage">Manage Teachers</h2>
 
         <!-- Search Teachers Form -->
-        <h3>Search Teachers</h3>
-        <input type="text" id="teacher-search-query" placeholder="Search by teacher name or email">
-        <button onclick="searchTeachers()">Search</button>
+        <h3 class="manage-users">Search Teachers</h3>
+        <input class="add-class-form" type="text" id="teacher-search-query" placeholder="Search by teacher name or email">
+        <button class="submit-button" onclick="searchTeachers()">Search</button>
 
         <!-- Teachers List -->
-        <h3>Teachers List</h3>
+        <h3 class="manage-users">Teachers List</h3>
         <table id="teachers-table">
             <thead>
                 <tr>
@@ -245,7 +245,7 @@
                     <td>{{ teacher.phone_number }}</td>
                     <td>
                         <form action="{{ url_for('user_management.delete_user', user_id=teacher.user_id) }}" method="POST">
-                            <button type="submit">Delete</button>
+                            <button  type="submit" class="submit-button">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -257,14 +257,14 @@
 
     <!-- Parents Section -->
     <section id="parents">
-        <h2>Manage Parents</h2>
+        <h2 class="manage">Manage Parents</h2>
 
-        <h3>Search Parents</h3>
-        <input type="text" id="parent-search-query" placeholder="Search by name, email, or phone">
-        <button onclick="searchParents()">Search</button>
+        <h3 class="manage-users">Search Parents</h3>
+        <input class="add-class-form" type="text" id="parent-search-query" placeholder="Search by name, email, or phone">
+        <button class="submit-button" onclick="searchParents()">Search</button>
 
         <!-- Parents List -->
-        <h3>Parents List</h3>
+        <h3 class="manage-users">Parents List</h3>
         <table id="parents-table">
             <thead>
                 <tr>
@@ -287,7 +287,7 @@
                     <td>{{ parent.phone_number }}</td>
                     <td>
                         <form action="{{ url_for('user_management.delete_user', user_id=parent.user_id) }}" method="POST">
-                            <button type="submit">Delete</button>
+                            <button class="submit-button" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -299,9 +299,9 @@
 
     <!-- Students Section -->
     <section id="students">
-        <h2>Manage Students</h2>
+        <h2 class="manage">Manage Students</h2>
 
-        <h3>Link Student to Class</h3>
+        <h3 class="manage-users">Link Student to Class</h3>
         <form id="link-student-class-form" action="{{ url_for('links.link_student_class') }}" method="POST">
             <label for="student_id-class">Select Student:</label>
             <select name="student_id" id="student_id-class" required>
@@ -318,10 +318,10 @@
                 {% endfor %}
             </select>
 
-            <button type="submit">Link Student to Class</button>
+            <button class="submit-button" type="submit">Link Student to Class</button>
         </form>
 
-        <h3>Link Student to Parent</h3>
+        <h3 class="manage-users">Link Student to Parent</h3>
         <form id="link-student-parent-form" action="{{ url_for('links.link_student_parent') }}" method="POST">
             <label for="student_id">Select Student:</label>
             <select name="student_id" id="student_id" required>
@@ -338,14 +338,14 @@
                 {% endfor %}
             </select>
 
-            <button type="submit">Link Student to Parent</button>
+            <button class="submit-button" type="submit">Link Student to Parent</button>
         </form>
 
-        <h3>Search Students</h3>
+        <h3 class="manage-users">Search Students</h3>
         <input type="text" id="student-search-query" placeholder="Search by name, username">
-        <button onclick="searchStudents()">Search</button>
+        <button class="submit-button" onclick="searchStudents()">Search</button>
 
-        <h3>Students List</h3>
+        <h3 class="manage-users">Students List</h3>
         <table id="students-table">
             <thead>
                 <tr>
