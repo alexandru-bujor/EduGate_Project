@@ -4,9 +4,11 @@ FAF EduGate PBL Project.
 ## [1.0.2] - 2024-11-22
 ### Added
 - Direct navigation links from dashboards to the homepage via the logo for improved user experience.
+- Added the front-end design to the teacher dashboard, displaying the teacher, it's classes and students
 
 ### Fixed
 - Resolved a rendering issue that prevented the Student Dashboard from fully displaying student information.
+- The back-end from the teacher dashboard didn't work correctly (it fetched the information about all classes, students, etc.). Right now it is fixed and it's getting only the correct data.
 
 ### Improved
 - Front-end design enhancements across all dashboards, including layout adjustments, photo alignment, font resizing, enhanced accordion design in the Parent Dashboard and margin corrections for a more polished look.
