@@ -1,57 +1,25 @@
-import pymysql
-import time
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 from datetime import datetime
+import time
 from smartcard.System import readers
 from smartcard.util import toHexString
 
-# Database connection
-db = pymysql.connect(host='localhost', user='root', password='', database='school_access')
-cursor = db.cursor()
 
-# Main NFC tracking function
-def track_nfc():
-    last_uid = None  # Track the last detected UID
-    last_read_time = 0  # Track the last read time
+#mongodb connect
+cluster = "mongodb+srv://sandumagla:QHpB0YxzKyhPLmuw@test.zpzjq.mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(cluster, server_api=ServerApi('1'))
 
-    while True:
-        uid = read_nfc_card()
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(f"MongoDB connection error: {e}")
+    exit()
 
-        # Check if a card was detected and apply 2-second timeout
-        if uid and (uid != last_uid or (time.time() - last_read_time) >= 2):
-            student_id = get_student_id_by_uid(uid)
-            if student_id:
-                # Log entry if student ID exists
-                log_attendance_entry(student_id, uid)
-                print(f"User with UID {uid} entered the system.")
-                last_uid = uid  # Update the last UID
-                last_read_time = time.time()  # Update the last read time
-            else:
-                print(f"No student associated with UID {uid}. Please register.")
-        else:
-            if uid:
-                print(f"UID {uid} detected, but cooldown is active.")
+db = client["School_Acces"]
+pbl_db = db["pbl_db"]
 
-        # Sleep for a short period to avoid excessive CPU usage
-        time.sleep(0.1)
-
-
-# Function to check if a student with a given UID exists in the database
-def get_student_id_by_uid(uid):
-    sql = "SELECT student_id FROM students WHERE uid = %s"
-    cursor.execute(sql, (uid,))
-    result = cursor.fetchone()
-    return result[0] if result else None
-
-# Function to log the NFC entry into the database
-def log_attendance_entry(student_id, uid):
-    sql = """
-        INSERT INTO attendance (student_id, uid, entry_time, exit_time, session_number, face_confirmation)
-        VALUES (%s, %s, NOW(), NULL, 1, FALSE)
-    """
-    cursor.execute(sql, (student_id, uid))
-    db.commit()
-
-# NFC reading function
 def read_nfc_card():
     r = readers()
     if len(r) == 0:
@@ -63,24 +31,67 @@ def read_nfc_card():
 
     try:
         connection.connect()
-        GET_UID = [0xFF, 0xCA, 0x00, 0x00, 0x00]  # Command to get UID from card
+        GET_UID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
         data, sw1, sw2 = connection.transmit(GET_UID)
 
         if sw1 == 0x90 and sw2 == 0x00:
-            uid = toHexString(data)
-            return uid
+            return toHexString(data)
         else:
             print("Failed to read card UID.")
             return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"NFC reader error: {e}")
         return None
+
+def insert_attendance(uid):
+    student_table = pbl_db.find_one({"name": "students"})
+    if not student_table or "data" not in student_table:
+        print("Students table not found or has no data.")
+        return
+
+    student = next((s for s in student_table["data"] if s.get("uid") == uid), None)
+
+    if student:
+        new_record = {
+            "student_id": student.get("student_id"),
+            "user_id": student.get("user_id"),
+            "uid": uid,
+            "face_id": True,
+            "entry_time": datetime.now(),
+            "exit_time": None
+        }
+
+        result = pbl_db.update_one(
+            {"name": "attendance"},
+            {"$push": {"data": new_record}}
+        )
+
+        if result.modified_count > 0:
+            print(f"Attendance recorded for UID {uid}.")
+        else:
+            print(f"Failed to update attendance for UID {uid}.")
+    else:
+        print(f"No matching student found for UID {uid}.")
+
+def track_nfc():
+    last_uid = None
+    last_read_time = 0
+
+    while True:
+        uid = read_nfc_card()
+
+        if uid and (uid != last_uid or time.time() - last_read_time > 2):
+            print(f"Detected UID: {uid}")
+            insert_attendance(uid)
+            last_uid = uid
+            last_read_time = time.time()
+        elif uid:
+            print(f"UID {uid} detected, but cooldown is active.")
+
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     try:
         track_nfc()
     except KeyboardInterrupt:
         print("Session ended.")
-    finally:
-        cursor.close()
-        db.close()
