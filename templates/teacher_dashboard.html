@@ -80,6 +80,7 @@
         </div>
     </div>
 
+
     <nav>
         <a href="#" id="nav-classes" onclick="showSection('classes')">Classes</a>
         <a href="#" id="nav-parents" onclick="showSection('parents')">Parents</a>
@@ -97,6 +98,7 @@
                     <th>Class ID</th>
                     <th>Class Name</th>
                     <th>Description</th>
+                    <th>teacher</th>
                 </tr>
             </thead>
             <tbody>
@@ -105,6 +107,7 @@
                     <td>{{ class.class_id }}</td>
                     <td>{{ class.class_name }}</td>
                     <td>{{ class.description }}</td>
+                    <td>{{ class.teacher_id }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -112,41 +115,41 @@
     </section>
 
     <!-- Parents Section -->
-    <section id="parents">
-        <!-- Parents List -->
-        <h3>Parents List</h3>
-        <table id="parents-table">
-            <thead>
-                <tr>
-                    <th>Profile Picture</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for parent in parents %}
-                <tr>
-                    <td>
-                        <img src="{{ url_for('static', filename='profile_pictures/' ~ parent.profile_picture) }}"
-                             alt="Profile Picture" width="50" height="50">
-                    </td>
-                    <td>{{ parent.full_name }}</td>
-                    <td>{{ parent.email }}</td>
-                    <td>{{ parent.phone_number }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<!--    <section id="parents">-->
+<!--        &lt;!&ndash; Parents List &ndash;&gt;-->
+<!--        <h3>Parents List</h3>-->
+<!--        <table id="parents-table">-->
+<!--            <thead>-->
+<!--                <tr>-->
+<!--                    <th>Profile Picture</th>-->
+<!--                    <th>Full Name</th>-->
+<!--                    <th>Email</th>-->
+<!--                    <th>Phone Number</th>-->
+<!--                </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--                {% for parent in parents %}-->
+<!--                <tr>-->
+<!--                    <td>-->
+<!--                        <img src="{{ url_for('static', filename='profile_pictures/' ~ parent.profile_picture) }}"-->
+<!--                             alt="Profile Picture" width="50" height="50">-->
+<!--                    </td>-->
+<!--                    <td>{{ parent.full_name }}</td>-->
+<!--                    <td>{{ parent.email }}</td>-->
+<!--                    <td>{{ parent.phone_number }}</td>-->
+<!--                </tr>-->
+<!--                {% endfor %}-->
+<!--            </tbody>-->
+<!--        </table>-->
 
-    </section>
+<!--    </section>-->
 
     <!-- Students Section -->
     <section id="students">
 
-        <h3>Search Students</h3>
-        <input type="text" id="student-search-query" placeholder="Search by name, username">
-        <button onclick="searchStudents()">Search</button>
+<!--        <h3>Search Students</h3>-->
+<!--        <input type="text" id="student-search-query" placeholder="Search by name, username">-->
+<!--        <button onclick="searchStudents()">Search</button>-->
 
         <h3>Students List</h3>
         <table id="students-table">
@@ -155,7 +158,6 @@
                     <th>Profile Picture</th>
                     <th>Username</th>
                     <th>Full Name</th>
-                    <th>Class</th>
                     <th>Email</th>
                     <th>Parent</th>
                 </tr>
@@ -164,20 +166,20 @@
                 {% for student in students %}
                 <tr>
                     <td class="profile-picture-cell">
-                        <img src="{{ url_for('static', filename='profile_pictures/' + (student.profile_picture or 'default.jpg')) }}"
+                        <img src="{{ url_for('static', filename='profile_pictures/' + (student.student_profile_picture or 'default.jpg')) }}"
                              alt="Profile Picture">
                     </td>
-                    <td>{{ student.student_name }}</td>
-                    <td>{{ student.class_name if student.class_name else 'No Class Assigned' }}</td>
-                    <td>{{ student.email }}</td>
+                    <td>{{ student.student_username }}</td>
+                    <td>{{ student.student_full_name }}</td>
+                    <td>{{ student.student_email }}</td>
                     <td>
-                        {% if student.parent_name %}
-                            <a href="#" onclick="searchParent('{{ student.parent_name }}')">
-                                ({{ student.parent_id }}) {{ student.parent_name }}
-                            </a>
-                        {% else %}
+<!--                        {% if student.parent_name %}-->
+<!--                            <a href="#" onclick="searchParent('{{ student.parent_name }}')">-->
+<!--                                ({{ student.parent_id }}) {{ student.parent_name }}-->
+<!--                            </a>-->
+<!--                        {% else %}-->
                             No Parent Assigned
-                        {% endif %}
+<!--                        {% endif %}-->
                     </td>
                 </tr>
                 {% endfor %}
@@ -228,74 +230,4 @@
 <script src="{{ url_for('static', filename='js/admin_dashb.js') }}"></script>
 
 </body>
-<!--<body>-->
-
-<!--<div class="dashboard-container">-->
-<!--    <header>-->
-<!--        <h1>Welcome, {{ teacher.full_name }}</h1>-->
-<!--        <img src="/static/profile_pictures/{{ teacher.profile_picture }}" alt="Profile Picture" width="100" height="100">-->
-<!--        <p>Email: {{ teacher.email }}</p>-->
-<!--        <p>Phone: {{ teacher.phone_number }}</p>-->
-<!--    </header>-->
-
-<!--    <section class="classes-section">-->
-<!--        <h2>Your Classes</h2>-->
-<!--        {% if classes %}-->
-<!--            <div class="class-list">-->
-<!--                {% for class in classes %}-->
-<!--                    <div class="class-card">-->
-<!--                        <h3>{{ class.class_name }}</h3>-->
-<!--                        <p>{{ class.description }}</p>-->
-<!--                        <h4>Students:</h4>-->
-<!--                        <ul>-->
-<!--                            {% for student in class.students %}-->
-<!--                                <li>-->
-<!--                                    <strong>{{ student.full_name }}</strong>-->
-<!--                                    <span>Student ID: {{ student.student_id }}</span>-->
-<!--                                    <img src="/static/profile_pictures/{{ student.profile_picture }}" alt="Student Picture" width="50" height="50">-->
-<!--                                </li>-->
-<!--                            {% endfor %}-->
-<!--                        </ul>-->
-<!--                    </div>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--        {% else %}-->
-<!--            <p>No classes assigned.</p>-->
-<!--        {% endif %}-->
-<!--    </section>-->
-
-<!--    <section class="attendance-section">-->
-<!--        <h2>Student Attendance</h2>-->
-<!--        {% if attendance_records %}-->
-<!--            <table>-->
-<!--                <thead>-->
-<!--                    <tr>-->
-<!--                        <th>Student Name</th>-->
-<!--                        <th>Entry Time</th>-->
-<!--                        <th>Exit Time</th>-->
-<!--                        <th>Face Confirmation</th>-->
-<!--                    </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                    {% for record in attendance_records %}-->
-<!--                        <tr>-->
-<!--                            <td>{{ record.student_name }}</td>-->
-<!--                            <td>{{ record.entry_time }}</td>-->
-<!--                            <td>{{ record.exit_time }}</td>-->
-<!--                            <td>{{ 'Confirmed' if record.face_confirmation else 'Unconfirmed' }}</td>-->
-<!--                        </tr>-->
-<!--                    {% endfor %}-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        {% else %}-->
-<!--            <p>No attendance records available.</p>-->
-<!--        {% endif %}-->
-<!--    </section>-->
-
-<!--    <footer>-->
-<!--        <a href="/logout">Logout</a>-->
-<!--    </footer>-->
-<!--</div>-->
-
-<!--</body>-->
 </html>

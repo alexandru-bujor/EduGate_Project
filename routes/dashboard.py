@@ -121,54 +121,112 @@ def teacher_dashboard():
     # Fetch users and teachers data
     users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
     teachers_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'teachers'})
-
-    # Fetch parents
-    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
-    parents = []
-    if parents_doc:
-        for parent in parents_doc['data']:
-            user = next((u for u in users_doc['data'] if u['user_id'] == parent['user_id']), {})
-            parents.append({**user, 'parent_id': parent.get('parent_id')})
-
-
-    # Fetch classes
     classes_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'classes'})
-    # Dictionary to map teacher_id to full_name
-    teacher_name_mapping = {}
-    for teacher in teachers_doc['data']:
-        user = next((u for u in users_doc['data'] if u['user_id'] == teacher['user_id']), None)
-        if user:
-            teacher_name_mapping[teacher['teacher_id']] = user['full_name']
+    students_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'students'})
+    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
+    attendance_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'attendance'})
 
-    # Classes list with teacher names
-    classes = []
-    if classes_doc:
-        for class_item in classes_doc['data']:
-            teacher_name = teacher_name_mapping.get(class_item.get('teacher_id'), "No Teacher Assigned")
-            classes.append({
-                'class_id': class_item.get('class_id'),
-                'class_name': class_item.get('class_name'),
-                'description': class_item.get('description'),
-                'teacher_name': teacher_name
-            })
-    # Find the teacher's details
     teacher_record = next((t for t in teachers_doc['data'] if str(t['user_id']) == user_id), None)
-    user_record = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), None)
+    teacher_user = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), None)
 
-    if not teacher_record or not user_record:
+    if not teacher_record or not teacher_user:
         flash("Teacher not found or not linked properly.")
         return redirect(url_for('login'))
 
     # Construct the teacher data for the template
     teacher = {
-        'full_name': user_record.get('full_name'),
-        'profile_picture': user_record.get('profile_picture'),
+        'full_name': teacher_user.get('full_name'),
+        'profile_picture': teacher_user.get('profile_picture'),
+        'teacher_id': teacher_record.get('teacher_id'),
     }
+
+    # Classes list
+    classes = []
+    for class_item in classes_doc['data']:
+        if class_item.get('teacher_id') == teacher['teacher_id']:
+            classes.append({
+                'class_id': class_item.get('class_id'),
+                'class_name': class_item.get('class_name'),
+                'description': class_item.get('description'),
+                'teacher_id': class_item.get('teacher_id')
+            })
+
+    # Fetch students linked to this parent
+    students = []
+    for class_item in classes:
+        for student in students_doc['data']:
+            if student.get('class_id') == class_item['class_id']:
+               student_user = next((u for u in users_doc['data'] if u['user_id'] == student['user_id']), {})
+               students.append({
+                    'student_id': student.get('student_id'),
+                    'student_username': student_user.get('username'),
+                    'student_full_name': student_user.get('full_name'),
+                    'student_email': student_user.get('email'),
+                    'student_profile_picture': student_user.get('profile_picture')
+                })
+
+
+
+
+    # Fetch parents
+    # parents = []
+    # for student in students:
+    # for parent in parents_doc['data']:
+    #     if parent.get('parent_id')  == student['parent_id']:
+    #         parent_user = next((u for u in users_doc['data'] if u['user_id'] == parent['user_id']), {})
+    #     parents.append({
+    #         'parent_id': parent.get('parent_id'),
+    #         'parent_full_name': parent_user.get('full_name'),
+    #         'parent_profile_picture': parent_user.get('profile_picture')
+    #     })
+
+
+
+
+
+    # Fetch attendance records and calculate stats for each student
+    for student in students:
+        student_id = student['student_id']
+        attendance_records = [
+            record for record in attendance_doc['data'] if record.get('student_id') == student_id
+        ]
+
+        student['attendance_records'] = attendance_records
+
+        # Initialize attendance stats
+        on_time = late = absent = 0
+        total_records = len(attendance_records)
+
+        for record in attendance_records:
+            entry_time = record.get('entry_time')
+            if entry_time is None:
+                absent += 1
+            elif isinstance(entry_time, datetime.datetime):
+                if entry_time.time() <= datetime.time(8, 15):
+                    on_time += 1
+                else:
+                    late += 1
+
+        # Avoid division by zero
+        if total_records > 0:
+            on_time_percentage = (on_time / total_records) * 100
+            late_percentage = (late / total_records) * 100
+            absent_percentage = (absent / total_records) * 100
+        else:
+            on_time_percentage = late_percentage = absent_percentage = 0
+
+        student['attendance_stats'] = {
+            'on_time': on_time_percentage,
+            'late': late_percentage,
+            'absent': absent_percentage
+        }
+
 
     return render_template('teacher_dashboard.html',
                            teacher=teacher,
-                           parents=parents,
-                           classes=classes)
+                           # parents=parents,
+                           classes=classes,
+                           students=students)
 
 
 # ------------------ PARENT DASHBOARD ROUTE ------------------
