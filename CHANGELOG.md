@@ -1,6 +1,16 @@
 # Changelog
 
 FAF EduGate PBL Project.
+## [1.0.2] - 2024-11-22
+### Added
+- Direct navigation links from dashboards to the homepage via the logo for improved user experience.
+
+### Fixed
+- Resolved a rendering issue that prevented the Student Dashboard from fully displaying student information.
+
+### Improved
+- Front-end design enhancements across all dashboards, including layout adjustments, photo alignment, font resizing, enhanced accordion design in the Parent Dashboard and margin corrections for a more polished look.
+
 ## [1.0.1] - 2024-11-08
 ### Added
 - `CHANGELOG.md` file created to document changes.
