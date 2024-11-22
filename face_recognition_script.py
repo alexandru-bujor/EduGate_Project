@@ -93,23 +93,25 @@ while True:
 
                     # Check the latest attendance record for this student
                     db = get_db_connection()
-                    attendance_collection = db['attendance_records']
+                    attendance_doc = db['pbl_db'].find_one({'type': 'table', 'name': 'attendance'})
 
-                    # TODO when the "attach card UID to student" and nfc.py will be implemented make so it would update the base 0 value on face_recognition_status"
-                    # # Retrieve the most recent attendance record for this student where face_confirmed is False
-                    # record = attendance_collection.find_one(
-                    #     {"student_id": student_id, "face_confirmed": 0, "status": "active"},
-                    #     sort=[("entry_time", -1)]
-                    # )
-                    #
-                    # if record:
-                    #     # Update the face_confirmed to 1
-                    #     attendance_collection.update_one(
-                    #         {"_id": record["_id"]},
-                    #         {"$set": {"face_confirmed": 1}}
-                    #     )
-                    #     print(f"Updated face confirmation for student ID: {student_id}")
+                    if attendance_doc and 'data' in attendance_doc:
+                        # Locate the most recent attendance record where face_id is False
+                        for record in attendance_doc['data']:
+                            if record['student_id'] == student_id:
+                                print("Condition true")
+                                # Update the face_id field to True
+                                record['face_id'] = True
 
+                                # Update the document in MongoDB
+                                db['pbl_db'].update_one(
+                                    {'_id': attendance_doc['_id'], 'data.student_id': student_id},
+                                    {'$set': {'data.$.face_id': True}}
+                                )
+                                print(f"Updated face confirmation for student ID: {student_id}")
+                                break
+                            else:
+                                print("Condition false")
             # Draw a rectangle around the face
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
