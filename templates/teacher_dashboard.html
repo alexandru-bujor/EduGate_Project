@@ -21,6 +21,7 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     {% if action %}
@@ -82,14 +83,14 @@
 
 
     <nav>
-        <a href="#" id="nav-classes" onclick="showSection('classes')">Classes</a>
+        <a href="#" id="nav-classes" class="active" onclick="showSection('classes')">Classes</a>
         <a href="#" id="nav-parents" onclick="showSection('parents')">Parents</a>
         <a href="#" id="nav-students" onclick="showSection('students')">Students</a>
     </nav>
 
 
     <!-- Classes Section -->
-    <section id="classes">
+    <section id="classes" class="active">
         <!-- Classes List -->
         <h3>Classes List</h3>
         <table id="classes-table">
@@ -164,7 +165,7 @@
             </thead>
             <tbody>
                 {% for student in students %}
-                <tr>
+                <tr onclick="openModal(event,'{{student.student_id}}', '{{ student.attendance_stats.on_time }}', '{{ student.attendance_stats.late }}', '{{ student.attendance_stats.absent }}')">
                     <td class="profile-picture-cell">
                         <img src="{{ url_for('static', filename='profile_pictures/' + (student.student_profile_picture or 'default.jpg')) }}"
                              alt="Profile Picture">
@@ -185,6 +186,13 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <!-- Modal content will be dynamically updated -->
+                <p id="modalContent"></p>
+            </div>
+        </div>
     </section>
 
     <div class="footer">
@@ -228,6 +236,74 @@
     </div>
 
 <script src="{{ url_for('static', filename='js/admin_dashb.js') }}"></script>
+<script>
+    // Open modal and populate with student information
+    function openModal(event, studentId, studentOnTime, studentLate, studentAbsent) {
+    event.stopPropagation(); // Prevent event bubbling
 
+    // Populate modal content dynamically
+    const modalContent = document.getElementById("modalContent");
+    modalContent.innerHTML = `
+        <div class="child-stats">
+            <p class="title">Statistics <i class="bi bi-bar-chart"></i></p>
+            <div class="child-chart">
+                <div class="chart-container" style="position: relative;">
+                    <canvas id="chart-${studentId}" class="my-chart"></canvas>
+                </div>
+                <div class="details">
+                    <ul>
+                        <li>On time: <span class="percentage">${studentOnTime}%</span></li>
+                        <li>Late: <span class="percentage">${studentLate}%</span></li>
+                        <li>Absent: <span class="percentage">${studentAbsent}%</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Show the modal
+    const modal = document.getElementById("myModal");
+    modal.style.display = "block";
+
+    // Wait until the modal content is rendered, then initialize the chart
+    setTimeout(() => {
+        const ctx = document.getElementById(`chart-${studentId}`).getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['On time', 'Late', 'Absent'],
+                datasets: [{
+                    data: [parseInt(studentOnTime), parseInt(studentLate), parseInt(studentAbsent)],
+                    backgroundColor: ['#4caf50', '#ff9800', '#f44336']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true, // Set to true for the legend to appear
+                    }
+                }
+            }
+        });
+    }, 0);
+}
+
+
+    // Close the modal
+    function closeModal() {
+        const modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    // Close the modal if the user clicks outside the modal content
+    window.onclick = function(event) {
+        const modal = document.getElementById("myModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
 </body>
 </html>

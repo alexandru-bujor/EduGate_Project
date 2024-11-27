@@ -229,6 +229,7 @@ def teacher_dashboard():
                            students=students)
 
 
+
 # ------------------ PARENT DASHBOARD ROUTE ------------------
 
 @dashboard_bp.route('/parent_dashboard')
