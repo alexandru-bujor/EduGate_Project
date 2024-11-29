@@ -32,46 +32,8 @@
 
 </head>
 <body>
-    <div class="header">
-        <div class="elements1">
-            <div class="name d-flex align-items-center">
-                <a href="{{ url_for('index.index') }}">
-                    <i class="bi bi-book"></i>
-                    <h1>EduGate</h1>
-                </a>
-            </div>
-        </div>
-        <div class="profile" onclick="openModalProfile(event)">
-            <i class="bi bi-person-fill"></i>
-        </div>
 
-        <div id="modalProfile" class="modalClass">
-            <div class="modalContentProfile">
-                <span class="closeModal" onclick="closeModalProfile()">&times;</span>
-                <div class="sections">
-                    <a href="#">
-                        <img src="/static/profile_pictures/{{ user.profile_picture }}" alt="Profile Picture" width="60" height="60">
-                        <h2>Welcome, {{ user.full_name }}</h2>
-                    </a>
-                </div>
-                <hr style="border: 1px solid #00000046; width: 100%; ">
-
-                <div class="sections">
-                    <a href="#">
-                        <i class="bi bi-gear-fill"></i>
-                        <h2>Settings</h2>
-                    </a>
-                </div>
-                <div class="sections">
-                    <a href="{{ url_for('auth.logout') }}">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <h2>Log out</h2>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    {% include 'header_dashboards.html' %}
 
     <div id="main-section">
         <p id="dashboard">Dashboard</p>

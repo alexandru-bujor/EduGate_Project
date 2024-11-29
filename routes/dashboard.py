@@ -76,6 +76,7 @@ def admin_dashboard():
     return render_template(
         'admin_dashboard.html',
         admin=admin,
+        user = admin,
         users=users_doc['data'],
         classes=classes,
         students=students,
@@ -225,6 +226,7 @@ def teacher_dashboard():
     return render_template('teacher_dashboard.html',
                            teacher=teacher,
                            # parents=parents,
+                           user = teacher,
                            classes=classes,
                            students=students)
 
@@ -311,4 +313,4 @@ def parent_dashboard():
             'absent': absent_percentage
         }
 
-    return render_template('parent_dashboard.html', parent=parent, students=students)
+    return render_template('parent_dashboard.html', parent=parent, user=parent, students=students)
