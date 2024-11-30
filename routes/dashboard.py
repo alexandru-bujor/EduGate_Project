@@ -1,7 +1,9 @@
 import datetime
 
-from flask import Blueprint, render_template, session, redirect, url_for
+from flask import Blueprint, render_template, session,  request, flash, redirect, url_for
 from utils.db import get_db_connection
+from routes.user_management import verify_password, hash_password
+
 
 from flask import Blueprint, render_template, session, redirect, url_for, flash
 from utils.db import get_db_connection
@@ -314,3 +316,48 @@ def parent_dashboard():
         }
 
     return render_template('parent_dashboard.html', parent=parent, user=parent, students=students)
+
+
+@dashboard_bp.route('/settings', methods=['GET', 'POST'])
+def settings():
+    user_id = session.get('user_id')
+
+    db = get_db_connection()
+    pbl_db_collection = db['pbl_db']
+
+    users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
+    user = next((u for u in users_doc['data'] if u.get('user_id') == user_id), None)
+
+    if request.method == 'POST':
+        current_password = request.form['current']
+        confirm_current = request.form['confirm-curr']
+        new_password = request.form['new']
+        confirm_new = request.form['confirm-new']
+
+        password_match = verify_password(user['password_hash'], current_password)
+
+        if password_match and current_password == confirm_current:
+            if new_password == confirm_new:
+                if new_password == current_password:
+                    flash("Please enter something different from your current password.")
+                    return render_template('/settings.html', user=user, action="Same password!")
+                else:
+                    new_password_hash = hash_password(new_password)
+
+                    result = pbl_db_collection.update_one(
+                        {'type': 'table', 'name': 'users', 'data.user_id': user_id},
+                        {'$set': {'data.$.password_hash': new_password_hash}}
+                    )
+
+                    flash('Password updated successfully.')
+                    return render_template('/settings.html', user=user, action="Successful change!")
+
+            else:
+                flash("New passwords don't match.")
+                return render_template('/settings.html', user=user, action="New passwords don't match!")
+
+        else:
+            flash("Current password is incorrect or doesn't match the confirmation.")
+            return render_template('/settings.html', user=user, action="Current password is incorrect or doesn't match the confirmation!")
+
+    return render_template('/settings.html', user=user)

@@ -1,7 +1,7 @@
 <div class="header">
         <div class="elements1">
             <div class="name d-flex align-items-center">
-                <a href="{{ url_for('index.index') }}">
+                <a href="{{ url_for('auth.logout') }}">
                     <i class="bi bi-book"></i>
                     <h1>EduGate</h1>
                 </a>
@@ -23,7 +23,7 @@
                 <hr style="border: 1px solid #00000046; width: 100%; ">
 
                 <div class="sections">
-                    <a href="#">
+                    <a href="{{url_for('dashboard.settings')}}">
                         <i class="bi bi-gear-fill"></i>
                         <h2>Settings</h2>
                     </a>
@@ -217,3 +217,25 @@ i.bi-book {
 
 
 </style>
+
+
+<script>
+     function openModalProfile(event) {
+            event.stopPropagation();  // Prevents the click event from affecting the accordion
+            document.getElementById("modalProfile").style.display = "block";
+        }
+
+
+        function closeModalProfile() {
+            event.stopPropagation();
+            document.getElementById("modalProfile").style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside the modal content
+        window.onclick = function(event) {
+            const modal = document.getElementById("modalProfile");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+</script>
