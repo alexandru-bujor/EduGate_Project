@@ -1,0 +1,152 @@
+html, body {
+    height: 100%;
+    font-size: 16px;
+    margin:0;
+    font-family: Inter;
+
+}
+
+:root {
+    --main-color: #d2e6e4;
+    --color2: #0b7077;
+}
+
+#main-container {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+
+#left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1rem;
+    width: 20%;
+}
+
+.person-data {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.person-data img {
+    width: 8vw;
+    height: 8vw;
+    max-width: 150vw;
+    max-height: 150vw;
+    border-radius: 50%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.person-data img,
+.sections img {
+    object-fit: cover;
+}
+
+#person-name {
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 2rem;
+    margin: 0;
+    color: black;
+    text-decoration: underline;
+    text-decoration-color: var(--color2);
+}
+
+
+#name-second-line {
+    font-family: Inter;
+    font-weight: 300;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+#right-section{
+    background: #eaeaea;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 6rem;
+    width: 80%;
+}
+
+#data{
+    width:70%;
+    color: var(--color2);
+}
+
+#data p{
+    margin-bottom: 0.5rem;
+}
+
+.data-line{
+    padding-top:1rem;
+}
+
+.data-info{
+    color:black;
+    border-radius: 0.5rem;
+    background: white;
+    padding:0.3rem;
+}
+
+#change{
+font-weight: bold;
+}
+
+#change-pass-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.field{
+    display: flex;
+    flex-direction: column;
+    padding-top:1rem;
+}
+
+input{
+    color:black;
+    border-radius: 0.5rem;
+    border:none;
+    background: white;
+    padding:0.3rem;
+}
+
+#confirm {
+  margin-top:1rem;
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #406a72;
+  color: #ffffff;
+  transition: 0.3s ease;
+  margin-bottom: 15px;
+  width: auto;
+}
+
+#confirm:hover {
+  background-color: #d4e3e2;
+  color: #406a72;
+}
+
+#confirm:active {
+  background-color: #d4e3e2;
+  color: #406a72;
+  transform: scale(1.05);
+}
+
