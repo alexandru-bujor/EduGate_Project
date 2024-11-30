@@ -97,14 +97,65 @@ def student_dashboard():
     # Fetch student details
     users_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'users'})
     students_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'students'})
-    student = next((s for s in students_doc['data'] if str(s['user_id']) == user_id), None)
-    user = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), {})
+    attendance_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'attendance'})
+    student_record = next((s for s in students_doc['data'] if str(s['user_id']) == user_id), None)
+    student_user = next((u for u in users_doc['data'] if str(u['user_id']) == user_id), None)
+
+    if not student_record or not student_user:
+        flash("Student not found or not linked properly.")
+        return redirect(url_for('login'))
+
+
+    student = {
+        'student_id': student_record.get('student_id'),
+        'student_username': student_user.get('username'),
+        'student_full_name': student_user.get('full_name'),
+        'student_email': student_user.get('email'),
+        'student_profile_picture': student_user.get('profile_picture')
+    }
 
     # Fetch parent details
-    parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
-    parent = next((p for p in parents_doc['data'] if p.get('parent_id') == student.get('parent_id')), {})
+    # parents_doc = pbl_db_collection.find_one({'type': 'table', 'name': 'parents'})
+    # parent = next((p for p in parents_doc['data'] if p.get('parent_id') == student.get('parent_id')), {})
 
-    return render_template('student_dashboard.html', user=user, parent=parent)
+    student_id = student['student_id']
+    attendance_records = [
+        record for record in attendance_doc['data'] if record.get('student_id') == student_id
+    ]
+
+    student['attendance_records'] = attendance_records
+
+    # Initialize attendance stats
+    on_time = late = absent = 0
+    total_records = len(attendance_records)
+
+    for record in attendance_records:
+        entry_time = record.get('entry_time')
+        if entry_time is None:
+            absent += 1
+        elif isinstance(entry_time, datetime.datetime):
+            if entry_time.time() <= datetime.time(8, 15):
+                on_time += 1
+            else:
+                late += 1
+
+    # Avoid division by zero
+    if total_records > 0:
+        on_time_percentage = (on_time / total_records) * 100
+        late_percentage = (late / total_records) * 100
+        absent_percentage = (absent / total_records) * 100
+    else:
+        on_time_percentage = late_percentage = absent_percentage = 0
+
+    student['attendance_stats'] = {
+        'on_time': on_time_percentage,
+        'late': late_percentage,
+        'absent': absent_percentage
+    }
+
+    return render_template('student_dashboard.html', student=student
+                           # ,parent=parent
+         )
 
 
 # ------------------ TEACHER DASHBOARD ROUTE ------------------
