@@ -111,7 +111,7 @@ function renderUserTable(users) {
             <td>${user.email}</td>
             <td>${user.phone_number}</td>
             <td>${user.role}</td>
-            <td><button onclick="deleteUser(${user.user_id})">Delete</button></td>
+            <td><button class="submit-button" onclick="deleteUser(${user.user_id})">Delete</button></td>
         `;
         usersTableBody.appendChild(row);
     });
@@ -151,7 +151,7 @@ function renderClassTable(classes) {
             <td>${classData.class_id}</td>
             <td>${classData.class_name}</td>
             <td>${classData.description}</td>
-            <td><button onclick="deleteClass(${classData.class_id})">Delete</button></td>
+            <td><button class="submit-button" onclick="deleteClass(${classData.class_id})">Delete</button></td>
         `;
         classesTableBody.appendChild(row);
     });
@@ -193,7 +193,7 @@ function renderTeacherTable(teachers) {
             <td>${teacher.full_name}</td>
             <td>${teacher.email}</td>
             <td>${teacher.phone_number}</td>
-            <td><button onclick="deleteTeacher(${teacher.user_id})">Delete</button></td>
+            <td><button class="submit-button" onclick="deleteTeacher(${teacher.user_id})">Delete</button></td>
         `;
         teachersTableBody.appendChild(row);
     });
@@ -241,7 +241,7 @@ function renderParentTable(parents) {
             <td>${parent.full_name}</td>
             <td>${parent.email}</td>
             <td>${parent.phone_number}</td>
-            <td><button onclick="deleteParent(${parent.user_id})">Delete</button></td>
+            <td><button class="submit-button" onclick="deleteParent(${parent.user_id})">Delete</button></td>
         `;
         parentsTableBody.appendChild(row);
     });
@@ -339,19 +339,20 @@ function renderStudentTable(students) {
         }
 
         const uidCell = document.createElement("td");
+        const actionCell = document.createElement("td");
         const uidInput = document.createElement("input");
         uidInput.type = "text";
         uidInput.value = student.uid || "";
         uidInput.id = `uid-${student.student_id}`;
-        uidInput.className = "uid-input";
+        uidInput.className = "admin-input";
 
         const updateButton = document.createElement("button");
         updateButton.textContent = "Update UID";
-        updateButton.className = "update-uid-btn";
+        updateButton.className = "submit-button";
         updateButton.addEventListener("click", () => updateUid(student.student_id));
 
         uidCell.appendChild(uidInput);
-        uidCell.appendChild(updateButton);
+        actionCell.appendChild(updateButton);
 
         row.append(
             imgCell,
@@ -360,7 +361,8 @@ function renderStudentTable(students) {
             classCell,
             emailCell,
             parentCell,
-            uidCell
+            uidCell,
+            actionCell
         );
 
         studentsTableBody.appendChild(row);

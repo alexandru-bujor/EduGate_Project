@@ -793,3 +793,7 @@ canvas {
         font-size: 0.5rem;
     }
 }
+
+.admin-input {
+  width: fit-content;
+}
