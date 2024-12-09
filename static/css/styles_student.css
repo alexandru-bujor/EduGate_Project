@@ -1,6 +1,7 @@
 html {
     height: 100%;
     font-size: 16px;
+    width: 100%;
 }
 
 :root {
@@ -16,6 +17,11 @@ html {
     width: 100%;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
 
 #main-section {
     /* margin: 1rem; */
@@ -54,10 +60,10 @@ html {
 }
 
 .person-data img {
-    width: 8vw;
-    height: 8vw;
-    max-width: 150vw;
-    max-height: 150vw;
+    width: 120px;
+    height: 120px;
+    /*max-width: 10vw;*/
+    /*max-height: 10vw;*/
     border-radius: 50%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -150,8 +156,7 @@ html {
     font-family: Raleway;
     font-weight: 600;
     font-size: 1.7em;
-    margin-bottom: 3vw;
-    /* margin: 0; */
+    /*margin-bottom: 3vw;*/
 }
 
 .child-stats:hover {
@@ -185,24 +190,22 @@ html {
 .child-chart{
     display: flex;
     flex-direction: row;
-    width:100%;
-    justify-content: center; 
-    align-items: center;  
+    width:90%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom:2vw;
 }
 
 #chart-container {
     display: flex;
-    width: 1rem;
+    width: 70%;
     height: 1rem;
     justify-content: center; 
     align-items: center;
     
 }
 
-canvas{
-    width: 15vw;
-    /* height: 10rem; */
-}
+
 
 .details{
     /* border: 1px solid black; */
@@ -304,12 +307,57 @@ canvas{
     width: 100%;
 }
 
+* {
+    box-sizing: border-box;
+}
 
-@media (max-width: 768px) {
-    
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+
+
+@media (max-width: 600px) {
+    #main-section {
+        width: 100%;
+    }
+
+    #tables{
+        flex-direction: column;
+        align-items: center;
+    }
+    .child-stats{
+        width:80%;
+    }
+    .person-data img{
+        width:19vw;
+        height:19vw;
+    }
+    #person-name{
+        font-size: 5.3vw;
+    }
+    #name-second-line{
+        font-size:4vw;
+    }
+    .child-stats{
+        margin-bottom: 3vw;
+    }
 }
 
 @media (max-width: 576px) {
+    #main-section {
+        width: 100%;
+
+    }
+
+    body {
+        width: 100%;
+
+    }
+
     .content li {
         font-size: 0.8rem;
     }
