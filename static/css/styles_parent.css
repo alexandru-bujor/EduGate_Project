@@ -15,7 +15,6 @@ html {
     justify-content: center;
     align-items: center;
     width: 100%;
-    /* flex-direction: column; */
 }
 
 #main-section {
@@ -57,32 +56,27 @@ html {
 }
 
 .person-data img {
-    /* border: 1px solid black; */
-    width: 8vw;  /* Adjust width based on viewport */
-    height: 8vw; /* Height should be the same to maintain circle */
-    max-width: 150vw; /* Maximum size limit */
-    max-height: 150vw;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 0; /* Remove margin */
+    /*object-fit: cover;*/
+    /*margin-bottom: 0; !* Remove margin *!*/
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     }
 
 
 #person-name {
-    /* border: 1px solid black; */
     font-family: Inter;
     font-weight:600;
-    font-size: 3rem;
-    margin: 0; /* Remove margin for better alignment */
+    font-size: 2rem;
+    margin: 0;
     color: black;
     text-decoration: underline;
     text-decoration-color: var(--color2);
 }
 
 #name-second-line{
-    /* border: 1px solid black; */
     font-family: Inter;
     font-weight:300;
     font-size: 1.5rem;
@@ -117,10 +111,9 @@ html {
 }
 
     .accordeon{
-    width: 100%;
-    /*border-radius: 1rem 1rem 0 0;*/
-    border: 2px solid rgba(177, 212, 208, 0.7);
-    box-shadow: 2px 2px 6px rgba(177, 212, 208, 0.7);
+        width: 100%;
+        border: 2px solid rgba(177, 212, 208, 0.7);
+        box-shadow: 2px 2px 6px rgba(177, 212, 208, 0.7);
 
 } 
 
@@ -197,6 +190,7 @@ p {
 }
 
 #tables{
+
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -264,23 +258,22 @@ p {
 .child-chart{
     display: flex;
     flex-direction: row;
-    width:100%;
+    width:90%;
     justify-content: center; 
-    align-items: center;  
+    align-items: center;
+    margin-bottom:2vw;
+
 }
 
 #chart-container {
     display: flex;
-    width: 1rem;
+    width: 70%;
     height: 1rem;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
     
 }
-canvas{
-    width: 15vw;
-    /* height: 10rem; */
-}
+
 
 
 .details{
@@ -394,91 +387,87 @@ i.bi-bar-chart, i.bi-clock-history{
 
     
 
-@media (max-width: 300px) {
-/* .header {
-    height: 6vw;
-} */
+/*@media (max-width: 300px) {*/
+/*!* .header {*/
+/*    height: 6vw;*/
+/*} *!*/
 
-.person-data img {
-    width: 10vw;
-    height: 10vw;
-    max-width: 120px;
-    max-height: 120px;
-}
+/*.person-data img {*/
+/*    width: 10vw;*/
+/*    height: 10vw;*/
+/*    max-width: 120px;*/
+/*    max-height: 120px;*/
+/*}*/
 
-#person-name {
-    font-size: 2.5rem;
-}
+/*#person-name {*/
+/*    font-size: 2.5rem;*/
+/*}*/
 
-#name-second-line {
-    font-size: 1.2rem;
-}
+/*#name-second-line {*/
+/*    font-size: 1.2rem;*/
+/*}*/
 
-.child-stats {
-    width: 45%;
-    margin-top: 2vw;
-}
+/*.child-stats {*/
+/*    width: 45%;*/
+/*    margin-top: 2vw;*/
+/*}*/
 
-.child-stats .title {
-    font-size: 1.5em;
-}
+/*.child-stats .title {*/
+/*    font-size: 1.5em;*/
+/*}*/
 
-/* #myChart {
-    width: 80%;
-    height: 80%;
-} */
+/*!* #myChart {*/
+/*    width: 80%;*/
+/*    height: 80%;*/
+/*} *!*/
 
-/* .accordeon {
-    width: 90%;
-} */
+/*!* .accordeon {*/
+/*    width: 90%;*/
+/*} *!*/
 
-/* .details {
-    font-size: 0.5rem;
-    background-color: red;
-} */
+/*!* .details {*/
+/*    font-size: 0.5rem;*/
+/*    background-color: red;*/
+/*} *!*/
 
-.history-container {
-    gap: 1rem;
-}
-}
+/*.history-container {*/
+/*    gap: 1rem;*/
+/*}*/
+/*}*/
 
 @media (max-width: 600px) {
 /* .header {
     height: 6vw;
 } */
 
+#tables{
+    flex-direction: column;
+    align-items: center;
+    }
+
 .person-data img {
-    width: 10vw;
-    height: 10vw;
-    max-width: 120px;
-    max-height: 120px;
+    width:19vw;
+    height:19vw;
 }
 
 #person-name {
-    font-size: 2.5rem;
+    font-size: 5.3vw;
 }
 
 #name-second-line {
-    font-size: 1.2rem;
+    font-size:4vw;
 }
 
 .child-stats {
-    width: 45%;
+    width: 80%;
     margin-top: 2vw;
+    margin-bottom: 3vw;
 }
 
 .child-stats .title {
     font-size: 1.5em;
 }
-/* 
-#myChart {
-    width: 80%;
-    height: 80%;
-} */
 
-/* .accordeon {
-    width: 90%;
-} */
 
 .details {
     font-size: 0.5rem;
@@ -490,84 +479,91 @@ i.bi-bar-chart, i.bi-clock-history{
 }
 }
 
-@media (max-width: 768px) {
-/* .header {
-    height: 4vw;
-} */
+/*@media (max-width: 768px) {*/
+/*!* .header {*/
+/*    height: 4vw;*/
+/*} *!*/
 
-.person-data img {
-    width: 10vw;
-    height: 10vw;
-    max-width: 120px;
-    max-height: 120px;
-}
+/*.person-data img {*/
+/*    width: 10vw;*/
+/*    height: 10vw;*/
+/*    max-width: 120px;*/
+/*    max-height: 120px;*/
+/*}*/
 
-#person-name {
-    font-size: 2.5rem;
-}
+/*#person-name {*/
+/*    font-size: 2.5rem;*/
+/*}*/
 
-#name-second-line {
-    font-size: 1.2rem;
-}
+/*#name-second-line {*/
+/*    font-size: 1.2rem;*/
+/*}*/
 
-.child-stats {
-    width: 45%;
-    margin-top: 2vw;
-}
+/*.child-stats {*/
+/*    width: 45%;*/
+/*    margin-top: 2vw;*/
+/*}*/
 
-.child-stats .title {
-    font-size: 1.5em;
-}
+/*.child-stats .title {*/
+/*    font-size: 1.5em;*/
+/*}*/
 
-/* #myChart {
-    width: 80%;
-    height: 80%;
-} */
+/*!* #myChart {*/
+/*    width: 80%;*/
+/*    height: 80%;*/
+/*} *!*/
 
-/* .accordeon {
-    width: 90%;
-} */
+/*!* .accordeon {*/
+/*    width: 90%;*/
+/*} *!*/
 
-.history-container {
-    gap: 1rem;
-}
-}
+/*.history-container {*/
+/*    gap: 1rem;*/
+/*}*/
+/*}*/
 
-/* Larger screens (desktops, 1024px and above) */
-@media (max-width: 1024px) {
-/* .header {
-    height: 5vw;
-} */
+/*!* Larger screens (desktops, 1024px and above) *!*/
+/*@media (max-width: 1024px) {*/
+/*!*!* .header {*!*/
+/*!*    height: 5vw;*!*/
+/*!*} *!*!*/
 
-.person-data img {
-    width: 8vw;
-    height: 8vw;
-    max-width: 150px;
-    max-height: 150px;
-}
+/*!*.person-data img {*!*/
+/*!*    width: 8vw;*!*/
+/*!*    height: 8vw;*!*/
+/*!*    max-width: 150px;*!*/
+/*!*    max-height: 150px;*!*/
+/*!*}*!*/
 
-#person-name {
-    font-size: 3rem;
-}
+/*!*#person-name {*!*/
+/*!*    font-size: 3rem;*!*/
+/*!*}*!*/
 
-#name-second-line {
-    font-size: 1.5rem;
-}
+/*!*#name-second-line {*!*/
+/*!*    font-size: 1.5rem;*!*/
+/*!*}*!*/
 
-.child-stats {
-    width: 40%;
-}
+/*.child-stats {*/
+/*    width: 40%;*/
+/*}*/
 
-.child-stats .title {
-    font-size: 1.7em;
-}
+/*.child-stats .title {*/
+/*    font-size: 1.7em;*/
+/*}*/
 
-/* #myChart {
-    width: 90%;
-    height: 90%;
-} */
+/*!* #myChart {*/
+/*    width: 90%;*/
+/*    height: 90%;*/
+/*} *!*/
 
-/* .accordeon {
-    width: 80%;
-} */
-}
+/*!* .accordeon {*/
+/*    width: 80%;*/
+/*} *!*/
+/*}*/
+
+
+/*@media (max-width: 576px) {*/
+
+/*}*/
+
+

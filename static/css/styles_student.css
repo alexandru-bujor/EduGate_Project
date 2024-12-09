@@ -62,8 +62,6 @@ html, body {
 .person-data img {
     width: 120px;
     height: 120px;
-    /*max-width: 10vw;*/
-    /*max-height: 10vw;*/
     border-radius: 50%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
