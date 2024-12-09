@@ -11,6 +11,8 @@ html, body {
     --color2: #0b7077;
 }
 
+
+
 #main-container {
     background-color: white;
     display: flex;
@@ -27,7 +29,7 @@ html, body {
     gap: 1.5rem;
     align-items: flex-start;
     padding: 1rem;
-    width: 20%;
+    width: 300px;
 }
 
 .person-data {
@@ -40,10 +42,8 @@ html, body {
 }
 
 .person-data img {
-    width: 8vw;
-    height: 8vw;
-    max-width: 150vw;
-    max-height: 150vw;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -78,7 +78,7 @@ html, body {
     gap: 1.5rem;
     align-items: flex-start;
     padding: 6rem;
-    width: 80%;
+    width: 100%;
 }
 
 #data{
@@ -148,5 +148,32 @@ input{
   background-color: #d4e3e2;
   color: #406a72;
   transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    #left-section{
+        width:30%;
+    }
+
+    #right-section{
+        width:70%;
+        padding:1rem 1rem 6rem 2rem;
+    }
+
+    .person-data img{
+        width:19vw;
+        height:19vw;
+    }
+    #person-name{
+        font-size: 5.3vw;
+    }
+    #name-second-line{
+        font-size:4vw;
+    }
+
+    #data{
+        width:100%;
+    }
+
 }
 
