@@ -1,4 +1,27 @@
 // ------------------ MODAL PROFILE ------------------
+
+    // Open and close modal functionality
+    const modal = document.getElementById("user-modal");
+    const openModalButton = document.getElementById("open-modal");
+    const closeModalButton = document.querySelector(".close");
+
+    // Open the modal
+    openModalButton.addEventListener("click", () => {
+        modal.style.display = "flex";
+    });
+
+    // Close the modal
+    closeModalButton.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    // Close the modal when clicking outside the content box
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+
 function openModalProfile(event) {
     event.stopPropagation();  // Prevents the click event from affecting the accordion
     document.getElementById("modalProfile").style.display = "block";
