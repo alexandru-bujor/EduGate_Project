@@ -302,9 +302,9 @@ html {
 
 .person-data img {
   border: 1px solid black;
-  width: 8vw;
+  width: 14vw;
   /* Adjust width based on viewport */
-  height: 8vw;
+  height: 14vw;
   /* Height should be the same to maintain circle */
   max-width: 150vw;
   /* Maximum size limit */
@@ -625,6 +625,43 @@ canvas {
 
 
 @media (max-width: 768px) {
+    #person-name {
+        font-size: 6vw;
+    }
+
+    #name-second-line {
+        font-size: 4vw;
+    }
+
+    .person-data img {
+        width: 17vw;
+        height: 17vw;
+    }
+
+    nav a {
+        margin-left: 2vw;
+        padding: 5px;
+        font-size: 3vw;
+    }
+
+    h3 {
+        font-size: 5vw;
+    }
+
+    #chart-1 {
+        width: 40vw;
+        height: 40vw;
+        font-size: 4vw;
+    }
+
+    #dashboard {
+        font-size: 6vw;
+    }
+
+    table {
+        font-size: 2vw;
+    }
+
     .name h1 {
         font-size: 1.25rem;
     }
@@ -671,6 +708,10 @@ canvas {
 @media (max-width: 576px) {
     .header {
         padding: 1.5rem;
+    }
+
+    nav a {
+        font-size: 4vw;
     }
 
     .name h1 {
